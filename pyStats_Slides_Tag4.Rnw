@@ -1,0 +1,969 @@
+\documentclass{beamer}
+\mode<presentation>{
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+\setbeamercolor{title}{bg=gray!10!white}
+\setbeamertemplate{itemize item}{\color{darkred}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{darkred}$\blacktriangleright$}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{enumerate item}{fg=darkred}
+\setbeamercolor{enumerate subitem}{fg=darkred}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{adjustbox}
+}
+
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+
+\title[Statistik Kurs]{Einführung in die Statistik mit Python}
+\author[RS-eco]{RS-eco} % Your name
+\institute[TUM]{Biodiversity \& Global Change Lab\\Technische Universität München \\ \vspace{1ex}
+\href{mailto:rs-eco@posteo.de}{rs-eco@posteo.de} \\ \vspace{1ex} 16. November 2019} 
+\date{}
+\titlegraphic{\vspace{-5ex} \includegraphics[width=\textwidth]{figures/mountain_hist}}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+%------------------------------------------------
+
+\section{Korrelation}
+
+% see also: https://en.wikipedia.org/wiki/Correlation_and_dependence
+% see also http://www.reiter1.com/Glossar/Glossar.htm
+% http://www.statsoft.com/Textbook/Basic-Statistics#Correlationsb
+
+\begin{frame}
+\frametitle{Korrelation}
+\begin{itemize}
+\item Korrelation misst die Assoziation zwischen zwei Variablen.
+\item Im Gegensatz dazu macht die lineare Regression die Vorhersage eines Wertes auf Grundlage des Wertes einer anderen Variablen
+\item Es gibt drei verschiedene Korrelations-Maße: \textbf{Pearson Produkt-Moment-Korrelation, Spearman Rank Korrelation \& Kendall-tau Korrelation}
+\end{itemize}
+\vspace{2ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.85\textwidth]{figures/correlation}}
+\end{figure}
+\end{frame}
+
+\subsection{Pearson Produkt-Moment-Korrelation}
+
+\begin{frame}
+\frametitle{Pearson Produkt-Moment-Korrelation}
+\begin{itemize}
+\item Möchte man den linearen Zusammenhang zweier Merkmale bestimmen, nutzt man hierzu meist den Korrelationskoeffizienten. 
+\item ein dimensionsloses Zusammenhangsmaß, das mit dem Symbol r abgekürzt wird und Werte zwischen -1 und 1 annehmen kann. 
+\item Bei einem positiven linearen Zusammenhang, nähert sich der Koeffizient dem Wert „1“ an und beide Merkmale tendieren in eine Richtung. 
+\item Bei einem negativen linearen Zusammenhang, also der Annäherung an den Wert „-1“, haben die Merkmale eine gegensätzliche Tendenz. 
+\item Kein Zusammenhang besteht, wenn sich der Koeffizient dem Wert „0“ annähert. 
+\item An dem Koeffizienten lassen sich also die Richtung des Zusammenhangs und die Stärke ablesen, aber nicht die Steigung!
+\item Berechnet wird der Korrelationskoeffizient, indem man die Kovarianz beider zu vergleichenden Merkmale durch das Produkt der Standardabweichungen beider Merkmale teilt. 
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Pearson Produkt-Moment-Korrelation}
+\tiny{
+<<engine='python', eval=F>>=
+import math
+
+def correlation(x, y):
+  n = len(x)
+
+  # Mittelwerte berechnen
+  x_mn = sum(x) / n 
+  y_mn = sum(y) / n
+
+  # Varianzen berechnen
+  var_x = (1 / (n-1)) * sum(map(lambda xi: (xi - x_mn) ** 2 , x))
+  var_y = (1 / (n-1)) * sum(map(lambda yi: (yi - y_mn) ** 2 , y))
+
+  # Standardabweichungen berechenen
+  std_x, std_y = math.sqrt(var_x), math.sqrt(var_y)
+
+  # Kovarianz berechnen
+  xy_var = map(lambda xi, yi: (xi - x_mn) * (yi - y_mn), x, y)
+  cov = (1 / (n-1)) * sum(xy_var)
+
+  # Korrelationskoeffizient nach Pearson
+  r = cov / (std_x * std_y)
+  return float(f"{r:.3f}")
+
+  # Wohnungsgröße in Quadratmetern, Mietkosten
+  sqrm = [20, 30, 40, 50, 60]
+  cost = [300, 400, 600, 700, 1000]
+
+  print(correlation(sqrm, cost)) #out: 0.981
+@
+}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pearson Produkt-Moment-Korrelation}
+\begin{itemize}
+\item Die Variablen müssen mindestens intervallskaliert (bzw. metrisch) sein. 
+\item Beide Merkmal müssen einem linearen Zusammenhang folgen und Normal verteilt sein.
+\item Ist der Zusammenhang etwa exponentiell (Linearitätsbedingung nicht erfüllt), so ist das Ergebnis für den Zusammenhang relativ gering (obwohl beide Werte zum Beispiel in dieselbe Richtung weisen).
+\end{itemize}
+\vspace{1ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.8\textwidth]{figures/correlation_examples}}
+\end{figure}
+\vspace{3ex}
+\end{frame}
+%Note: Correlation reflects the noisiness and direction of a linear relationship (top row), but not the slope of that relationship (middle), nor many aspects of nonlinear relationships (bottom)
+%The figure in the center has a slope of 0 but in that case the correlation coefficient is undefined because the variance of Y is zero.
+
+\subsection{Spearman Rank Korrelation}
+\begin{frame}
+\frametitle{Spearman Rank Korrelation}
+\begin{itemize}
+\item Der Pearson Korrelationskoeffizient besitzt den Nachteil, gegenüber Ausreißern empfindlich zu sein. 
+\item Die Spearman Rangkorrelation ist ebenfalls ein Maß zur Berechnung eines bivariaten Zusammenhangs, aber hat diesen Nachteil nicht. 
+\item Es lassen sich dabei jedoch bereits ordinalskallierte Daten nutzen, da hier die Ränge der Werte gebildet und eingesetzt werden (und nicht die Werte selbst).
+\item Bei der Rangvergabe werden die ursprünglichen Daten zunächst aufsteigend sortiert und anschließend die entsprechenden Ränge verteilt. Wird ein Rang mehrfach vergeben, dann wird der Mittelwert der Ränge gebildet.
+\item Zur Berechnung der Rang-Korrelation wird dieselbe Formel wie für die Pearson-Korrelation genutzt (Kovarianz geteilt durch das Produkt der Standardabweichungen), wobei man jedoch die korrespondierenden Rangwerte der Daten zur Berechnung einsetzt.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Spearman Rank Korrelation}
+\tiny{
+<<engine='python', eval=F>>=
+from collections import Counter
+
+def ranking(array):
+  counts = Counter(array)
+array_sorted = sorted(set(array))
+rank = 1
+rankings = {}
+for num in array_sorted:
+  count = counts.get(num)
+if count == 1:
+  rankings[num] = rank
+rank += 1
+else:
+  rankings[num] = sum(range(rank, rank+count)) / count
+rank += count
+return [float(rankings.get(num)) for num in array]
+
+# Beispiel für eine Rangkorrelation
+eng = [12, 12, 3, 6, 10, 4, 15, 8]
+deu = [14, 14, 5, 4, 11, 8, 10, 3]
+
+eng_rank = ranking(eng) # [6.5, 6.5, 1.0, 3.0, 5.0, 2.0, 8.0, 4.0]
+deu_rank = ranking(deu) # [7.5, 7.5, 3.0, 2.0, 6.0, 4.0, 5.0, 1.0]
+
+correlation(eng_rank, deu_rank) #out: 0.639
+@
+}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Statistische Modellierung}
+%------------------------------------------------
+
+\subsection{Lineare Regression} 
+
+\begin{frame}
+\frametitle{Lineare Regressions Modelle}
+\begin{itemize}
+\item Wir können lineare Regressionen verwenden, um den Wert einer Variablen durch die Werte von einer oder mehreren anderen Variablen vorherzusagen.
+\item Wir suchen nach der am besten geeigneten Linie: \textbf{y = x*coeff + intercept + e}, wobei der Koeffizient die Steigung oder Neigung der Linie und e das Beobachtungsrauschen ist.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.575\textwidth]{figures/lm-bestfit}}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lineare Regressions Modelle}
+\begin{itemize}
+\item Die Residuen sind die Unterschiede zwischen Beobachtungswerten und Prognosewerten.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.8\textwidth]{figures/lm-bestfit-resid}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lineare Regressions Modelle}
+\begin{itemize}
+\item Die Residuen sind die Unterschiede zwischen Beobachtungswerten und Prognosewerten.
+\vspace{1ex}
+\item Die lineare Regressionsgleichung wird gelöst, um die Quadratsumme der Residuen zu minimieren.
+\vspace{1ex}
+\item Lineare Regression wird manchmal auch als Ordinary Least-Squares (OLS) Regression bezeichnet.
+\vspace{1ex}
+\item Beachtet, dass im Gegensatz zur Korrelation diese Beziehung zwischen x und y nicht mehr symmetrisch ist: Es wird davon ausgegangen, dass die x-Werte genau bekannt sind und dass die gesamte Variabilität in den Residuen liegt.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Modellkoeffizienten}
+\begin{frame}[fragile]
+\frametitle{Modellkoeffizienten} %Model coefficients
+\begin{itemize}
+\item Die Koeffizienten oder Gewichte der linearen Regression sind in \textbf{result.params} enthalten und werden als Pandas-Objekt ausgegeben
+\item Die Standardfehler der Koeffizienten erhält man durch die Berechnung der Kovarianz-Varianz-Matrix für die geschätzten Koeffizienten der Prädiktorvariablen.
+\item Die Standardfehler sind die Quadratwurzeln der Elemente auf der Hauptdiagonale dieser Kovarianzmatrix. 
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Determinationskoeffizient}
+
+\begin{frame}
+\frametitle{Determinationskoeffizient}
+\begin{itemize}
+\item Die "Variabilität" der Daten wird durch verschiedene Summen von Quadraten gemessen:
+\item $SS_{mod}$ = Modellsumme der Quadrate/Erklärte Summe der Quadrate, oder die Summe der Quadrate für die Regression
+\item $SS_{res}$ = Restsumme der Quadrate/die Summe der Fehler-Quadrate
+\item $SS_{tot}$ = Gesamtsumme der Quadrate (= Stichprobenvarianz*(n - 1))
+\end{itemize}
+\vspace{1ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.75\textwidth]{figures/coefficient_determination}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Determinationskoeffizient}
+\begin{itemize}
+\item Die "Variabilität" der Daten wird durch verschiedene Summen von Quadraten gemessen:
+\item $SS_{mod}$ = Modellsumme der Quadrate/Erklärte Summe der Quadrate, oder die Summe der Quadrate für die Regression
+\item $SS_{res}$ = Restsumme der Quadrate/die Summe der Fehler-Quadrate
+\item $SS_{tot}$ = Gesamtsumme der Quadrate (= Stichprobenvarianz*(n - 1))
+\vspace{1ex}
+\item Für lineare Regressionsmodelle: $SS_{mod} + SS_{res} = SS_ {tot}$
+\vspace{1ex}
+\item Mit diesen Ausdrücken läst sich ist das Bestimmtheitsmaß bestimmen: $R_{2} = 1 - SS_{res}/SS_{tot} = SS_{mod} / SS_{tot}$.
+\vspace{1ex}
+\item Für eine einfache lineare Regression ist der Bestimmtheitsmaßstab $R^{2}$ das Quadrat des Korrelationskoeffizienten r. 
+\item $R^{2}$ ist einfacher zu interpretieren als der Korrelationskoeffizient r: Werte von $R^{2}$ nahe 1 entsprechen einer engen Korrelation, Werte nahe 0 einer schlechten Korrelation.
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Konfidenzintervall}
+
+\begin{frame}
+\frametitle{Konfidenzintervall}
+\begin{itemize}
+\item Das Konfidenzintervall wird aus dem Standardfehler, dem p-Wert und dem kritischen Wert aus einem t-Test mit N - k Freiheitsgraden aufgebaut, wobei k die Anzahl der Beobachtungen und P die Anzahl der Modellparameter, d.h. die Anzahl der Prädiktorvariablen ist.
+\vspace{1ex}
+\item Das Konfidenzintervall ist der Wertebereich, in dem wir erwarten würden, dass wir den Parameter von Interesse finden, basierend auf dem, was wir beobachtet haben.
+\vspace{1ex}
+\item Es gibt zwei Konfidenzintervalle, ein Konfidenzintervall für den variablen Koeffizienten des Prädiktors und eins für den konstanten Term.
+\vspace{1ex}
+\item Ein kleineres Konfidenzintervall deutet darauf hin, dass wir über den Wert des geschätzten Koeffizienten oder der konstanten Laufzeit zuversichtlich sind.
+\vspace{1ex}
+\item Ein größeres Konfidenzintervall deutet darauf hin, dass es mehr Unsicherheit oder Varianz in der geschätzten Laufzeit gibt.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Konfidenzintervall}
+\begin{itemize}
+\item Die beiden Arten von Konfidenzintervallen (eines für die Daten und eines für die angepassten Parameter) gibt es auch bei Linienanpassungen.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.65\textwidth]{figures/regression-ci}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Linear Regression in Python}
+\begin{frame}[fragile]
+\frametitle{Lineare Regression in Python}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+import pandas as pd
+import numpy as np
+
+## First, we generate simulated data according to the model:
+x = np.linspace(-5, 5, 20)
+np.random.seed(1)
+y = -5 + 3*x + 4 * np.random.normal(size=x.shape)
+data = pd.DataFrame({'x': x, 'y': y})
+
+## Then we specify an OLS model and fit it:
+from statsmodels.formula.api import ols
+model = ols("y ~ x", data).fit()
+
+## We can inspect the various statistics derived from the fit:
+print(model.summary()) 
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Lineare Regression in Python}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/OLS-result}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Model-Ergebnisse}
+\begin{itemize}
+\item n ist die Anzahl der Beobachtungen und k die Anzahl der Regressionsparameter, z.B. bei einer geraden Linie k = 2
+\item Die Freiheitsgrade (DF) des Modells sind die Anzahl der Prädiktoren oder erklärenden Variablen. 
+\item Die DF der Residuen ist die Anzahl der Beobachtungen minus die Freiheitsgrade des Modells, minus 1 (für den Offset).
+\item Die meisten der in der Zusammenfassung aufgeführten Werte sind über das Ergebnisobjekt verfügbar.
+\item So kann beispielsweise der Wert $R^{2}$ durch \textbf{result.rsquared} ermittelt werden.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Angepasster $R^{2}$ Wert}
+\begin{itemize}
+\item Für die Beurteilung der Qualität von Modellen bevorzugen viele Forscher den angepassten R 2-Wert, der häufig mit dem Balken über dem R angezeigt wird, der für eine große Anzahl von Parametern im Modell bestraft wird.
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\subsection{Quadratisches Polynom}
+\begin{frame}[fragile]
+\frametitle{Quadratisches Polynom}
+\vspace{-0.75ex}
+\scriptsize{
+<<engine='python', eval=F>>=
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import statsmodels.formula.api as smf
+
+''' Generate a noisy, slightly quadratic dataset '''
+x = np.arange(100)
+y = 150 + 3*x + 0.03*x**2 + 5*np.random.randn(len(x))
+df = pd.DataFrame({'x':x, 'y':y})
+
+# Fit the models, and show the results
+Res1 = smf.ols('y~x', df).fit()
+Res2 = smf.ols('y ~ x+I(x**2)', df).fit()
+Res3 = smf.ols('y ~ x+I(x**2)+I(x**3)', df).fit()
+
+print('The coefficients from the linear fit: {0}'.format(Res1.params))
+print('The coefficients from the quadratic fit: {0}'.format(Res2.params))
+print('The coefficients from the cubic fit: {0}'.format(Res3.params))
+@
+}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Quadratisches Polynom}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.8\textwidth]{figures/quadratic-fit}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Modell Vergleich}
+\begin{frame}[fragile]
+\frametitle{Finden der besten Lösung}
+\begin{itemize}
+\item Wenn wir herausfinden wollen, welches das "bessere" Modell ist, können wir die Werkzeuge von statsmodels nutzen.
+\item Das Akaike Information Criterion (AIC) kann verwendet werden, um die Qualität des Modells zu beurteilen: Je niedriger der AIC-Wert, desto besser das Modell.
+\end{itemize}
+\footnotesize{
+<<engine='python', eval=F>>=
+'''Solution with the tools from statsmodels'''
+import statsmodels.api as sm
+
+# Manually look at the results (AIC)
+print(Res1.summary2())
+
+# Or extract the AIC of all three Models
+print('The AIC-value is {0:4.1f} for the linear fit,\n 
+      {1:4.1f} for the quadratic fit, and \n 
+      {2:4.1f} for the cubic fit'.format(Res1.aic, Res2.aic, Res3.aic))
+@
+}\\
+\vspace{10ex}
+\end{frame}
+
+\subsection{Regplot \& Jointplot}
+\begin{frame}[fragile]
+\frametitle{Zusammenhänge mit Regplot und Jointplot darstellen}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+\vspace{2.5ex}
+\scriptsize{
+<<engine='python', eval=F>>=
+import seaborn as sns
+
+# Datensatz
+cars = sns.load_dataset("mpg") 
+
+# Figure und Axes Objekt anlegen
+fig, ax = plt.subplots(figsize=(8, 8))
+
+# Grafik anlegen
+conf = {"x": "weight", "y": "mpg",
+  "data": cars, "ax": ax}
+sns.regplot(**conf)
+
+# Grafik anzeigen
+plt.show()
+@
+}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{figures/regplot}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Zusammenhänge mit Regplot und Jointplot darstellen}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+\vspace{5ex}
+\scriptsize{
+<<engine='python', eval=F>>=
+import seaborn as sns
+
+# Datensatz
+cars = sns.load_dataset("mpg") 
+
+conf = {"x": "weight", "y": "mpg",
+  "kind": "reg", "data": cars,
+  "height": 8, "ratio": 6}
+
+f = sns.jointplot(**conf)
+f.set_axis_labels("Gewicht", 
+                  "Meilen pro Gallone")
+
+# Grafik anzeigen
+plt.show()
+@
+}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{figures/jointplot}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Grundannahmen}
+\begin{frame}
+\frametitle{Grundannahmen linearer Regressionsmodelle}
+\begin{itemize}
+\item Lineare Regressionsmodelle machen eine Reihe von Annahmen über die Prädiktorvariablen, die Antwortgrößen und deren Beziehung.
+\vspace{1ex}
+\begin{enumerate}
+\item Die unabhängigen Variablen (z.B. x) sind genau bekannt.
+\vspace{0.5ex}
+\item Gültigkeit: Am wichtigsten ist, dass die Daten, die Sie analysieren, der Forschungsfrage zugeordnet werden sollten, die Sie zu beantworten versuchen. Das klingt offensichtlich, wird aber oft übersehen oder ignoriert, weil es unangenehm sein kann. So beschreibt beispielsweise eine lineare Regression eine quadratische Kurve nicht richtig.
+\vspace{0.5ex}
+\item Additivität und Linearität: Die wichtigste mathematische Annahme des Regressionsmodells ist, dass seine deterministische Komponente eine lineare Funktion der einzelnen Prädiktoren ist.
+\vspace{0.5ex}
+\item Gleiche Fehlervarianz
+\vspace{0.5ex}
+\item Unabhängigkeit der Fehler von den Werten der unabhängigen Variablen.
+\vspace{0.5ex}
+\item Unabhängigkeit der unabhängigen Variablen.
+\end{enumerate}
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Anscombe-Quartett}
+\begin{frame}
+\frametitle{Anscombe-Quartett}
+\vspace{-0.5ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[trim=0 0 0 40, clip, width=0.95\textwidth]{figures/Anscombe_quartet}}
+\end{figure}
+\end{frame}
+
+\subsection{Bootstrapping}
+\begin{frame}
+\frametitle{Bootstrapping}
+\begin{itemize}
+\item Eine weitere Art der Modellierung ist das Bootstrapping.
+\item Manchmal haben wir Daten, die eine Verteilung beschreiben, wissen aber nicht, um welche Art von Verteilung es sich handelt. Was können wir also tun, wenn wir z.B. Vertrauenswerte für den Mittelwert herausfinden wollen?
+\item Die Antwort ist Bootstrapping.
+\item Bootstrapping ist ein Schema des Resamplings, bei dem zusätzliche Proben wiederholt aus dem Ausgangsmuster entnommen werden, um Schätzungen der Variabilität zu erhalten.
+\item In einem Fall, in dem die Verteilung des Eingangsmusters unbekannt ist, ist das Bootstrapping besonders hilfreich, da es Informationen über die Verteilung liefert.
+\item Die Anwendung von Bootstrapping in Python wird durch das Paket scikits.bootstrap von Constantine Evans (http://github.org/cgevans/scikits-bootstrap) erheblich erleichtert.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\section{Übung}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Übung}
+\begin{itemize}
+\item Ihr findet sämtliche Kursunterlagen unter: \href{http://github.com/RS-eco/pyStats}{http://github.com/RS-eco/pyStats}
+\vspace{2ex}
+\item Öffnet das Jupyter Notebook für Tag 4 und:
+\vspace{1ex}
+\begin{itemize}
+\item Ladet den Datensatz \textbf{schoko.csv} in Python
+\vspace{0.5ex}
+\item Erstellt eine Korrelation zwischen Kakaogehalt und Nussanteil (visuell und statistisch)
+\vspace{0.5ex}
+\item Erklärt das Gewicht der Schokolade den Preis? Prüft dies visuell und statistisch
+\vspace{0.5ex}
+\item Plottet eine lineare Regression mit Konfidenzintervallen
+\vspace{0.5ex}
+\item Unterscheidet sich die Beziehung zwischen Gewicht und Schokolade für Bio und Nicht-Bio Schokolade?
+\end{itemize}
+\end{itemize}
+\vspace{25ex}
+\end{frame}
+
+%------------------------------------------------
+
+\section{Multivariate Datenanalyse}
+
+\subsection{Korrelation} 
+
+\begin{frame}[fragile]
+\frametitle{Visualisierung von multivariaten Korrelationen}
+\begin{itemize}
+\item Für 3-6 Variablen, die miteinander in Beziehung stehen können, können wir mit einer Scatterplot-Matrix die Zusammenhänge zwischen den verschiedenen Variablen visualisieren.
+\end{itemize}
+<<engine='python', eval=F>>=
+# Load seaborn library
+import seaborn as sns
+sns.set()
+
+# Load data
+df = sns.load_dataset("iris")
+
+# Create pairplot
+sns.pairplot(df, hue="species", size=2.5)
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Visualisierung von multivariaten Korrelationen}
+\begin{itemize}
+\item Für 3-6 Variablen, die miteinander in Beziehung stehen können, können wir mit einer Scatterplot-Matrix die Zusammenhänge zwischen den verschiedenen Variablen visualisieren.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.55\textwidth]{figures/scatter-matrix}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Korrelationsmatrix}
+\begin{itemize}
+\item Eine elegante Möglichkeit, die Korrelation zwischen einer großen Anzahl von Variablen zu visualisieren, ist die Korrelationsmatrix.
+\end{itemize}
+\scriptsize{
+<<engine='python', eval=F>>=
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+sns.set(style="darkgrid")
+
+# Set seed for the random numbr generation
+rs = np.random.RandomState(33)
+# Create normally distribued dummy data, 
+# simulating 100 recordings from 30 different variables
+d = rs.normal(size=(100, 30))
+
+f, ax = plt.subplots(figsize=(9, 9))
+cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+# Calculate and visualize cross correlation 
+# between each possible combination of variables
+sns.corrplot(d, annot=False, sig_stars=False, 
+             diag_names=False, cmap=cmap, ax=ax)
+f.tight_layout()
+@
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Korrelationsmatrix}
+\begin{itemize}
+\item Eine elegante Möglichkeit, die Korrelation zwischen einer großen Anzahl von Variablen zu visualisieren, ist die Korrelationsmatrix.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.6\textwidth]{figures/cor-matrix}}
+\end{figure}
+\end{frame}
+
+\subsection{Multilineare Regression}
+\begin{frame}[fragile]
+\frametitle{Multilineare Regression}
+\begin{itemize}
+\item Für wirklich unabhängige Variablen, ist die multiple Regression eine einfache Erweiterung der einfachen linearen Regression.
+\item Multilineare Regression = ein lineares Modell, das eine Variable z (die abhängige Variable) mit 2 Variablen x und y erklärt: \textbf{$z = x*c_{1} + y*c_{2} + i + e$}
+\vspace{2ex}
+<<engine='python', eval=F>>=
+# Load iris dataset
+data = sns.load_dataset("iris")
+
+# Run model with two independent variables
+model = ols('''sepal_width ~ species + 
+            petal_length''', data).fit()
+
+# Print model summary
+print(model.summary()) 
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multilineare Regression}
+\begin{itemize}
+\item Ein solches Modell kann in 3D als Anpassung einer Ebene an eine Wolke von (x, y, z) Punkten gesehen werden.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.7\textwidth]{figures/multilinear-regression}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Post-hoc Analyse: Varianz-Analyse (ANOVA)}
+\begin{itemize}
+\item Im obigen Beispiel möchten wir testen, ob die Länge der Blütenblätter zwischen Iris versicolor und Iris virginica unterschiedlich ist, nachdem wir den Effekt der Blütenbreite entfernt haben. 
+\item Dies kann als Test der Differenz zwischen dem Koeffizienten von Iris versicolor und Iris virginica in obigem linearen Modell formuliert werden (es ist eine Varianzanalyse, ANOVA). 
+\item Dazu schreiben wir einen Kontrastvektor auf die geschätzten Parameter: Wir wollen "name[T.versicolor] - name[T.virginica]", mit einem "F-Test" testen.
+<<engine='python', eval=F>>=
+print(model.f_test([0, 1, -1, 0]))
+@
+%\item Is this difference significant?
+%\item Ist dieser Unterschied signifikant?
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Daten-Vorbereitung für die multivariate Datenanalyse}
+  
+\begin{frame}[fragile]
+\frametitle{Daten transformieren: z-Transformation}
+\begin{itemize}
+\item Wenn Werte auf unterschiedlichen Skalen gemessen wurden, können wir diese auch mithilfe der sogenannten z-Transformation bzw. z-Standardisierung vergleichbar machen. 
+\item Diese Werte weisen die Besonderheit auf, dass sie einen Mittelwert von „0“ und eine Standardabweichung von „1“ besitzen. Ist der resultierende z-Wert für ein beobachtetes Datum also größer als „0“ (bzw. kleiner), lässt sich sagen, dass der Wert „überdurchschnittlich“ ist (bzw. unter dem Durchschnitt liegt). 
+\item Für die Berechnung wird zum einen der Mittelwert benötigt sowie die Standardabweichung. 
+\item Die jeweiligen z-Werte ergeben sich, indem man von jeder Beobachtung den Mittelwert der Beobachtungen abzieht und diesen Wert wiederum durch die Standardabweichung teilt.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten transformieren: z-Transformation}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+import math
+
+def z_transform(array):
+  n = len(array)
+  mn = sum(array)/n
+  var = (1/(n-1))*sum(map(lambda xi: (xi-mn)**2, array))
+  std = math.sqrt(var)
+  z = [(xi-mn)/std for xi in array]
+  return z
+
+pizza_de = [4.99, 7.99, 5.99, 4.99, 6.99]
+pizza_us = [5.74, 9.19, 6.89, 5.74, 8.04]
+
+z_de = z_transform(pizza_de)
+z_us = z_transform(pizza_us)
+z_de == z_us
+@
+\end{frame}
+
+\subsection{Clusteranalyse}
+
+\begin{frame}
+\frametitle{Clusteranalyse}
+\begin{itemize}
+\item Es ist die Aufgabe, eine Menge von Objekten so zu gruppieren, dass Objekte in derselben Gruppe oder demselben Cluster einander ähnlicher sind als diejenigen in anderen Gruppen oder Clustern.
+\item Es ist eine gängige Technik zur statistischen Datenanalyse.
+\item Die Clusteranalyse kann durch verschiedene Algorithmen erreicht werden, die sich stark unterscheiden können.
+\item Moderne Clusterbegriffe umfassen Gruppen mit geringen Abständen zwischen den Clustermitgliedern, dichte Bereiche des Datenraums, Intervalle oder bestimmte statistische Verteilungen.
+\item Daher ist die Clusteranalyse als solche keine triviale Aufgabe. Es handelt sich um eine interaktive mehrkriterielle Optimierung, die Trial-and-Error beinhaltet.
+\item Oft ist es auch notwendig, die Datenvorverarbeitung und die Parameter von Modellen oder Algorithmen zu modifizieren, bis das Ergebnis die gewünschten Eigenschaften erreicht.
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Clusteranalyse}
+\begin{itemize}
+\item Die Clusteranalyse, das Clustering von Probanden oder Variablen, wird zunächst durch ein Ähnlichskeits- und Distanzmaß zwischen zwei Probanden und später zwischen zwei Clustern durchgeführt.
+\item Diese Gruppen können mit hierarchischen oder nicht-hierarchischen Techniken durchgeführt werden.
+\item Die Cluster-Analyse ermöglicht es dem Individuen mit unterschiedlichen Merkmalen in einer großen Datenprobe schnell zu identifizieren.
+\item Wenn der Leser die Anzahl der Cluster kennt, ist ein nicht-hierarchisches Clustering ausreichend. Andernfalls muss eine hierarchische Analyse vorab durchgeführt werden.
+\item Hierarchisches Clustering: \textbf{Single linkage, Complete linkage, Average group linkage, Average linkage within groups, Centroid clustering, Ward method}
+\item Nicht-hierarchisches Clustering: \textbf{K-Means}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Distanz- und Ähnlichkeitsmaße}
+\begin{frame}
+\frametitle{Distanz- und Ähnlichkeitsmaße}
+\begin{itemize}
+\item Die Identifizierung von natürlichen Clustern von Probanden oder Variablen erfordert, dass die Ähnlichkeit zwischen diesen explizit gemessen werden muss.
+\vspace{1ex}
+\item Es gibt mehrere Ähnlichkeitsmessungen (oder Nähe) oder Unähnlichkeit (oder Distanz), die je nach Variablentyp (Intervall, Frequenz oder Nominalwert) verwendet werden können.
+\vspace{1ex}
+\item In der Clusteranalyse sind die häufigsten Kennzahlen: \textbf{Euklidische Distanz \& Jaccardähnlichkeit}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Euklidischer Abstand}
+\begin{itemize}
+\item Dies ist der Abstand zwischen zwei Punkten (p, q) in jeder beliebigen Dimension des Raumes
+\item Es ist das am Häufigsten verwendete Distanzmaß.
+\item Wenn die Daten dicht oder kontinuierlich sind, ist dies das beste Näherungsmaß.
+\end{itemize}
+\scriptsize{
+<<engine='python', eval=F>>=
+### Euclidean distance matrix
+
+# Import libraries
+import scipy.spatial.distance as sp
+
+# Filtering survey data
+data = data[["sepal_length", "sepal_width", "petal_length", "petal_width"]]
+
+# Calculate distance
+dist = sp.pdist(data, 'euclidean')
+df_dist = pd.DataFrame(sp.squareform(dist))
+print(df_dist.head())
+@
+}
+\vspace{7ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Jaccard-Koeffizient}
+\begin{itemize}
+\item Dies ist ein Standardindex für binäre Variablen.
+\item Es ist definiert als der Quotient zwischen dem Schnittpunkt und der Vereinigung der paarweise verglichenen Variablen zwischen zwei Objekten.
+\end{itemize}
+\scriptsize{
+<<engine='python', eval=F>>=
+### Jaccard similarity
+
+# Import libraries
+import scipy.spatial.distance as sp
+
+# Calculate Jaccard similarity
+dist = sp.pdist(data, 'jaccard')
+
+# Turn into DataFrame
+df_dist = pd.DataFrame(sp.squareform(dist))
+
+# Print head
+print(df_dist.head())
+@
+}
+\vspace{7ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ähnlichkeitsmaße für Variablen}
+\begin{itemize}
+\item Wenn die Clusteranalyse darauf abzielt, Variablen zu gruppieren (und nicht Probanden oder Gegenstände), sind die geeigneten Ähnlichkeitsmaße die Korrelationskoeffizienten der Stichprobe.
+\vspace{1ex}
+\item Bei kontinuierlichen Variablen ist der Pearson-Korrelationskoeffizient am besten geeignet.
+\vspace{1ex}
+\item Für ordinale Variablen sollte der Spearman-Korrelationskoeffizient verwendet werden. Für nominale Variablen sollte der Leser den phi-Koeffizienten verwenden.
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\subsection{Hierarchische Clusteranalyse}
+\begin{frame}
+\frametitle{Hierarchische Clusteranalyse}
+\begin{itemize}
+\item Hierarchische Techniken beziehen sich auf aufeinanderfolgende Schritte der Aggregation der betrachteten Subjekte, individuell. 
+\vspace{1ex}
+\item So, angesichts einer Reihe von N Elementen, die gebündelt werden sollen, und einer N × N Entfernungs-(oder Ähnlichkeits-)Matrix, ist der primäre Prozess des hierarchischen Clusterings:
+\begin{enumerate}
+\item Beginnen Sie damit, jedes Element seinem Cluster zuzuordnen, so dass, wenn es N Elemente hat, es jetzt N Cluster hat, die jeweils nur ein Element enthalten. Die Abstände (Ähnlichkeiten) zwischen den Clustern sollen den Abständen (Ähnlichkeiten) zwischen den Elementen entsprechen, die sie enthalten.
+\item Finden Sie das nächstgelegene (am ähnlichsten) Clusterpaar und führen Sie es zu einem einzigen Cluster zusammen, so dass es nun einen Cluster weniger hat.
+\item Berechnen Sie Abstände (Ähnlichkeiten) zwischen dem neuen Cluster und jedem der alten Cluster.
+\item Wiederholen Sie die Schritte 2 und 3, bis alle Elemente zu einem einzigen Cluster der Größe N zusammengefasst sind.
+\end{enumerate}
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hierarchische Clusteranalyse}
+\begin{itemize}
+\item Hierarchische Methoden von Clustern unterscheiden sich meist darin, wie diese Abstände berechnet werden.
+\vspace{1ex}
+\item Die am häufigsten verwendeten Methoden sind: Single-Linkage, Complete Linkage, Average Group Linkage, Average Linkage within Groups, Centroid Clustering \& Ward method
+\vspace{1ex}
+\item Da es mehrere verfügbare Methoden gibt, ist die Existenz von Vor- und Nachteilen bei der Anwendung jeder einzelnen von ihnen sichtbar.
+\vspace{1ex}
+\item Da die "beste" Methode zur Durchführung von hierarchischem Clustering nicht existiert, schlagen einige Autoren (Marôco, 2011) vor, verschiedene Methoden gleichzeitig zu verwenden.
+\vspace{1ex}
+\item Wenn also alle Methoden ähnlich interpretierbare Lösungen liefern, kann man daraus schließen, dass die Datenmatrix natürliche Gruppierungen aufweist.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Hierarchische Clusteranalyse in Python}
+\tiny{
+<<engine='python', eval=F>>=
+### Hierarchical clustering
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
+Z_single = linkage(X, ‘single’) # Single linkage
+Z_complete = linkage(X, ‘complete’) # Complete linkage
+
+# Single-linkage clustering (method= “single”)
+
+# Calculate full dendrogram
+plt.figure(figsize=(25, 10))
+plt.title(‘Hierarchical Clustering Dendrogram’)
+plt.xlabel(‘sample index’)
+plt.ylabel(‘distance’)
+dendrogram(Z_single,
+           leaf_rotation=90., # rotates the x axis labels
+           leaf_font_size=8., # font size for the x axis labels
+)
+plt.show()
+
+# Complete-linkage clustering (method= “complete”)
+plt.figure(figsize=(25, 10))
+plt.title(‘Hierarchical Clustering Dendrogram’)
+plt.xlabel(‘sample index’)
+plt.ylabel(‘distance’)
+dendrogram(Z_complete,
+           leaf_rotation=90., # rotates the x axis labels
+           leaf_font_size=8., # font size for the x axis labels
+)
+plt.show()
+@
+}
+\end{frame}
+
+\subsection{Partitionierende Clusteranalyse}
+\begin{frame}
+\frametitle{Partitionierende Clusteranalyse}
+\begin{itemize}
+\item Partitionierende Clusteringverfahren sind dazu gedacht, Elemente (und nicht Variablen) in einem Satz von Clustern zu gruppieren, deren Anzahl a priori definiert ist.
+\item Diese Methoden gelten schnell für Arrays mit großen Datenmengen, da es nicht notwendig ist, in jedem Schritt des Algorithmus eine neue Unähnlichkeitsmatrix zu berechnen und zu speichern.
+\item Es gibt verschiedene nicht-hierarchische Methoden, die sich vor allem dadurch unterscheiden, wie sie die erste Aggregation von Items in Clustern entfalten und wie die neuen Abstände zwischen den Zentroiden der Clustern und dem Item berechnet werden.
+\item Eine der Standardmethoden in den meisten statistischen Programmen ist das \textbf{K-means}.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{k-Means Clustering in Python}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+### Clustering with k-means
+
+from scipy.cluster.vq import whiten
+from sklearn.cluster import KMeans
+
+# Normalize variables values
+std_survey_data = whiten(data, check_finite=True)
+  
+# K-means cluster analysis
+kmeans = KMeans(n_clusters=3).fit(std_survey_data)
+centroids = kmeans.cluster_centers_
+
+# Plot data coloured by Clusters
+plt.scatter(data['sepal_length'], data['sepal_width'], 
+            c=kmeans.labels_.astype(float), s=50, alpha=0.5)
+plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
+@
+\vspace{2ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Übung}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Übung}
+\begin{itemize}
+\item Ihr findet sämtliche Kursunterlagen unter: \href{http://github.com/RS-eco/pyStats}{http://github.com/RS-eco/pyStats}
+\vspace{2ex}
+\item Öffnet das Jupyter Notebook für Tag 4 und:
+\vspace{1ex}
+\begin{itemize}
+\item Ladet den Datensatz \textbf{schoko.csv} in Python
+\vspace{0.5ex}
+\item Erstelle einen pairplot() für Preis, Kakaogehalt und Kategorie und zusätzlich "Bio" als hue
+\vspace{0.5ex}
+\item Erstelle eine Korrelationsmatrix für alle Variablen
+\vspace{0.5ex}
+\item Erstelle eine multilineare Regression für Kakaogehalt, Anzahl der Inhaltsstoffe und Preis und plottet diesen Zusammenhang in 3D
+\vspace{0.5ex}
+\item Erstelle eine hierarchische Cluster-Analyse für jede Schokoladen-Tafel
+\vspace{0.5ex}
+\item Erstelle eine nicht-hierarchische Cluster-Analyse für den Schoko Datensatz
+\end{itemize}
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Vielen Dank für eure Aufmerksamkeit!}
+%------------------------------------------------
+
+\end{document}

@@ -1,0 +1,1253 @@
+\documentclass{beamer}
+\mode<presentation>{
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+\setbeamercolor{title}{bg=gray!10!white}
+\setbeamertemplate{itemize item}{\color{darkred}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{darkred}$\blacktriangleright$}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{enumerate items}[default]
+\setbeamercolor{enumerate item}{fg=darkred}
+\setbeamercolor{enumerate subitem}{fg=darkred}
+\setbeamertemplate{navigation symbols}{}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{hyperref}
+}
+
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+
+\title[Statistik Kurs]{Einführung in die Statistik mit Python}
+\author[RS-eco]{RS-eco}
+\institute[TUM]{Biodiversity \& Global Change Lab\\Technische Universität München \\ \vspace{1ex}
+\href{mailto:rs-eco@posteo.de}{rs-eco@posteo.de} \\ \vspace{1ex} 26. Oktober 2019} 
+\date{}
+\titlegraphic{\vspace{-5ex} \includegraphics[width=\textwidth]{figures/mountain_hist}}
+
+\begin{document}
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%------------------------------------------------
+\section{Unstatistik des Monats}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Immer mehr Nitrat im Grundwasser}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{figures/nitrat}}
+\end{figure}
+\begin{itemize}
+\item Laut Rheinischer Post nahm der mittlere Nitratgehalt an den 15 am stärksten belasteten deutschen Messpunkten von 2013 bis 2017 um rund 40 Milligramm pro Liter zu.
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Immer mehr Nitrat im Grundwasser}
+\begin{itemize}
+\item Laut Rheinischer Post nahm der mittlere Nitratgehalt an den 15 am stärksten belasteten deutschen Messpunkten von 2013 bis 2017 um rund 40 Milligramm pro Liter zu.
+\item Daraus folgt aber nicht, wie fälschlicherweise behauptet, dass die Nitratbelastung insgesamt gestiegen ist. Sie ist vermutlich, weiter gefallen.
+\item Problem 1: Die Messpunkte sind nicht die gleichen – 2017 wurden verschiedene Messpunkte von 2013 ausgetauscht (mit Bedacht in Hochbelastungsregionen verlegt)
+\item Problem 2: 2013 gingen die Jahresdurchschnittswerte, im Jahr 2017 aber die Höchstwerte (über ausgewählte Tage) in die Analyse ein.
+\end{itemize}
+\vspace{1ex}
+Gegen einen Austausch der Messstationen wäre nichts einzuwenden, wenn man an der zeitlichen Entwicklung der Maxima interessiert wäre. Zum Betrug wird diese Vorgangsweise, wenn man das Ergebnis als landesweiten Durchschnitt verkauft.
+\vspace{5ex}
+\end{frame}
+%\href{http://www.rwi-essen.de/unstatistik/94}{http://www.rwi-essen.de/unstatistik/94}
+
+%------------------------------------------------
+\section{Wiederholung}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Wiederholung}
+\begin{itemize}
+\item Was habt ihr vom gestrigen Tag mitgenommen?
+\vspace{2ex}
+\begin{itemize}
+\item abhängige vs. unabhängige Variablen
+\item nominal, ordinale und metrische Daten
+\item stetige vs. diskrete Daten
+\item häufbare vs. nicht-häufbare Daten
+\item Zahlen, Zeichenketten, Listen, ...
+\end{itemize}
+\vspace{2ex}
+\item Habt ihr noch Fragen zum gestrigen Tag?
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Deskriptive Statistik}
+%------------------------------------------------
+
+\subsection{Lagemaßzahlen}
+
+\begin{frame}
+\frametitle{Lagemaßzahlen}
+\begin{itemize}
+\item \textbf{Arithmetischer Mittelwert} = die Summe der gegebenen Werte geteilt durch die Anzahl der Werte (Mittel, Durschnitt)
+\item \textbf{Geometrisches Mittel} =  ein Mittelwert, der die zentrale Tendenz oder den typischen Wert einer Reihe von Zahlen unter Verwendung des Produkts ihrer Werte angibt. Dazu werden die Zahlen miteinander Multipliziert und die n-te Wurzel gezogen, wobei n der Anzahl der zu mittelnden Zahlen entspricht. Das geometrische Mittel ist stets kleiner oder maximal gleich dem arithmetischen Mittel. Verwendung im Zusammenhang mit Wachstumsfaktoren von Beständen.
+\item \textbf{Harmonisches Mittel} = findet Verwendung, wenn die Zahlen im Bezug auf eine Einheit definiert sind. Dazu wird die Anzahl der Werte durch die Summe der Kehrwerte der Zahlen geteilt. Verwendung bei Durchschnitt von Raten oder der Berechnung von mittleren Geschwindigkeiten.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lagemaßzahlen}
+\begin{itemize}
+\item \textbf{Median} = derjenige Messwert, der genau „in der Mitte“ steht, wenn man die Messwerte der Größe nach sortiert (Zentralwert). 
+\item Kann auf folgende Weise bestimmt werden: 
+\begin{enumerate}
+\item Alle Werte werden (aufsteigend) geordnet.
+\item Wenn die Anzahl der Werte ungerade ist, ist die mittlere Zahl der Median.
+\item Wenn die Anzahl der Werte gerade ist, wird der Median meist als arithmetisches Mittel der beiden mittleren Zahlen definiert.
+\end{enumerate}
+\end{itemize}
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Lagemaßzahlen}
+\begin{itemize}
+\item \textbf{Median} = derjenige Messwert, der genau „in der Mitte“ steht, wenn man die Messwerte der Größe nach sortiert (Zentralwert). 
+\item \textbf{Modus} = der häufigste Wert, der in einer Stichprobe vorkommt (Modalwert), kann auf nominal, ordinal und kardinal Daten angewendet werden. 
+\item \textbf{Quantile} = teilt die Stichprobe so, dass ein Anteil der Stichprobe von p kleiner als das empirische p-Quantil ist und ein Anteil von 1-p der Stichprobe größer als das empirische p-Quantil ist
+\vspace{2ex}
+\begin{itemize}
+\item \textbf{Quartile} = die beiden Quantile mit p = 0,25 (untere) und p = 0,75 (obere). Zwischen oberem und unterem Quartil liegt die Hälfte der Stichprobe, unterhalb des unteren Quartils und oberhalb des oberen Quartils jeweils ein Viertel der Stichprobe. 
+\vspace{1ex}
+\item \textbf{Perzentile} = die Quantile von 0,01 bis 0,99 in Schritten von 0,01
+\end{itemize}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Stamm-Blatt-Diagramm}
+
+\begin{frame}
+\frametitle{Stamm-Blatt-Diagramm}
+\begin{itemize}
+\item dient der Visualisierung von Häufigkeitsverteilungen
+\item Das Diagramm besteht normalerweise aus zwei Spalten. Die linke Spalte enthält als „Stämme“ die Äquivalenzklassen, in die die auf der rechten Seite als „Blätter“ dargestellten Merkmale eingeteilt werden.
+\end{itemize}
+\vspace{2ex}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.42\textwidth]{figures/stem-and-leaf}}
+\end{figure}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Stamm-Blatt-Diagramm}
+\begin{itemize}
+\item dient der Visualisierung von Häufigkeitsverteilungen
+\item Das Diagramm besteht normalerweise aus zwei Spalten. Die linke Spalte enthält als „Stämme“ die Äquivalenzklassen, in die die auf der rechten Seite als „Blätter“ dargestellten Merkmale eingeteilt werden.
+\item Typisch ist eine Klassenbildung nach dem Dezimalsystem, aber auch andere Unterteilungen sind möglich, zum Beispiel die ersten beiden Ziffern als Stamm zu wählen.
+\item Aus einem Stamm-Blatt-Diagramm lassen sich statistische Kennzahlen wie Modalwert, Median und Quantile ablesen.
+\item Stößt jedoch bei einer großen Zahl von Merkmalen an seine Grenzen
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Extremwerte \& Spannweite}
+
+\begin{frame}
+\frametitle{Extremwerte \& Spannweite}
+\begin{itemize}
+\item \textbf{Minimum} = der kleinste Messwert
+\item \textbf{Maximum} = der größte Messwert
+\item \textbf{Spannweite (Range)} = Distanz zwischen dem größten und dem kleinsten Messwert
+\end{itemize}
+\vspace{35ex}
+\end{frame}
+%https://de.wikipedia.org/wiki/Extremwert
+
+\subsection{Streuungsmaßzahlen}
+
+\begin{frame}
+\frametitle{Streuungsmaßzahlen um das arithmetische Mittel}
+\begin{itemize}
+\item \textbf{Summer der Abweichungsquadrate (SS)} = die Summe der quadratischen Abweichungen der Messwerte von ihrem arithmetischen Mittel
+\item \textbf{Varianz} = Summe der Abweichungsquadrate geteilt durch die Anzahl der Messwerte
+\item \textbf{Standardabweichung (SD)} = die positive Wurzel aus der empirischen Varianz
+\item \textbf{Variationskoeffizient} = Quotient aus Standardabweichung und arithmetischem Mittel
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+%https://de.wikipedia.org/wiki/Streuungsma%C3%9F_(Statistik)
+
+\begin{frame}
+\frametitle{Streuungsmaßzahlen um den Median}
+\begin{itemize}
+\item \textbf{Quantilsabstand} = Differenz zwischen p- und (1\textminus p)-Quantil
+\item \textbf{Interquartilsabstand (IQR)} = Breite des Intervalls, in dem die mittleren 50 \% der Stichprobeelemente liegen
+\item \textbf{Mittlere absolute Abweichung vom Median (MD)} = wie weit eine Stichprobe im Durchschnitt vom Median abweicht
+\item \textbf{Median der absolute Abweichung (MAD)} = der Median der Abweichung einer Stichprobe vom Median
+\end{itemize}
+\vspace{25ex}
+\end{frame}
+
+\subsection{Schiefe \& Wölbung}
+
+\begin{frame}
+\frametitle{Schiefe \& Wölbung (höhere Momente)}
+\begin{itemize}
+\item \textbf{Schiefe (Skewness)} = Maß der Abweichung (Art und Stärke) von einer symmetrischen Verteilung
+\item Die „Schiefe“ gibt an, wie stark sich die Verteilung der Daten zur Seite „neigt“. 
+\item Aus statistischer Sicht ist eine symmetrische Verteilung gewünscht (Mittelwert, Median und Modus stimmen überein)
+%\item Ist die Verteilung nach rechts geneigt, dann spricht man von „rechtssteil“, „linksschief“ oder „negativer Schiefe“
+%\item Ist die Verteilung nach links geneigt, wird dies als „linkssteil“, „rechtsschief“, oder „positive Schiefe“ bezeichnet
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.9\textwidth]{figures/skewness}}
+\end{figure}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Schiefe \& Wölbung (höhere Momente)}
+\begin{itemize}
+\item \textbf{Wölbung (Kurtosis)} = Maß für die Steilheit bzw. Spitzigkeit einer Verteilung
+\item Verteilungen mit geringer Wölbung streuen relativ gleichmäßig
+\item bei Verteilungen mit hoher Wölbung resultiert die Streuung mehr aus extremen, aber seltenen Ereignissen
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.53\textwidth]{figures/kurtosis}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Übersichtstabellen}
+
+\begin{frame}
+\frametitle{Übersichtstabellen}
+\begin{itemize}
+\item \textbf{Häufigkeitsverteilung} = Angabe wie häufig jeder vorgekommene wie auch mögliche Werte vorkommt
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.45\textwidth]{figures/alterspyramide}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Übersichtstabellen}
+\begin{itemize}
+\item \textbf{Häufigkeitsverteilung} = Angabe wie häufig jeder vorgekommene wie auch mögliche Werte vorkommt
+\item \textbf{Kontingenztafel} = Tabelle, die die absolute oder relative Häufigkeit von bestimmten Merkmalsausprägungen enthält \\
+\vspace{2ex}
+\adjustbox{max height=\dimexpr\textheight-5.5cm\relax,
+max width=\textwidth}{
+\begin{tabular}{cccc} \hline
+Produkte \setminus Geschlecht & weiblich & männlich & Summe \\ \hline
+Produkt A & 660 & 340 & 1000 \\
+Produkt B & 340 & 660 & 1000 \\
+Summe & 1000 & 1000 & 2000 \\ \hline
+\end{tabular}
+}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Statistische Berechnungen mit Python}
+%------------------------------------------------
+
+\subsection{Lagemaßzahlen}
+
+\begin{frame}[fragile]
+\frametitle{Mittelwert berechnen}
+\vspace{-2ex}
+<<engine='python'>>=
+# Funktion definieren
+def mittelwert(array):
+  n = len(array)
+  return sum(array)/n
+
+# Liste erstellen
+gehalt = [1000, 1500, 1500, 20000, 3000, 2000]
+
+# Mittelwert berechnen
+mittelwert(gehalt)
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Median berechnen}
+\vspace{-2ex}
+<<engine='python'>>=
+def median(array):
+  array = sorted(array)
+  n = len(array)
+  index = int(n / 2)
+  if n % 2 == 0:
+    lower = array[index - 1]
+    upper = array[index]
+    median = 0.5 * (lower + upper)
+  else:
+    median = array[index]
+  return median
+
+gehalt = [1000, 1500, 1500, 20000, 3000, 2000]
+median(gehalt)
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Modus berechnen}
+\vspace{-2ex}
+<<engine='python'>>=
+from collections import Counter
+
+# Funktion definieren
+def modus(array):
+  counts = Counter(array)
+  most_common = counts.most_common(2)
+  modus = most_common[0][1]
+  if modus == most_common[1][1]:
+    return None
+  return array[modus]
+
+gehalt = [1000, 1500, 1500, 20000, 3000, 2000]
+modus(gehalt)
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Quantile, Quartile and Perzentile}
+\begin{itemize}
+\item Um sich Information hinsichtlich der Datenverteilung zu beschaffen, ist zudem die \textbf{quantile()}-Methode sehr praktisch. 
+\item Ihr kann ein einzelner Wert, aber auch eine Liste (bzw. ein Tuple) mit Werten übergeben werden. \\
+<<engine='python', eval=F>>=
+# Import library for iris dataset
+import seaborn as sns
+
+# Import dataset
+df = sns.load_dataset('iris')
+
+# Quantile
+df.quantile([0.01, 0.25, 0.5, 0.75, 0.99])
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Five-number summary}
+\begin{itemize}
+\item Minimum, unteres Quartile (1st), Median, oberes Quartile (3rd), Maximum
+<<engine='python'>>=
+import numpy as np
+
+def fivenum(data):
+  return np.percentile(data, [0, 25, 50, 75, 100],
+                       interpolation='midpoint')
+
+moons = [0, 0, 1, 2, 63, 61, 27, 13]
+
+print(fivenum(moons))
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+% https://en.wikipedia.org/wiki/Five-number_summary
+
+\subsection{Extremwerte und Spannweite}
+
+\begin{frame}[fragile]
+\frametitle{Extremwerte und Spannweite}
+\vspace{-2ex}
+<<engine='python'>>=
+# Define values
+values = [4,12,43.3,19,100]
+
+print(min(values)) # Calculate minimum
+
+print(max(values)) # Calculate maximum
+@
+\vspace{-2ex}
+<<engine='python'>>=
+# Need to define our own function
+def getrange(numbers): return max(numbers) - min(numbers)
+
+print(getrange(values)) # Calculate range
+@
+\vspace{2ex}
+\end{frame}
+
+\subsection{Streuungsmaßzahlen}
+
+\begin{frame}[fragile]
+\frametitle{Varianz berechnen}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+import math
+
+def varianz(array):
+  n = len(array)
+  mn = sum(array) / n
+  var = (1 / (n-1)) * sum(
+    map(lambda xi: (xi-mn) ** 2 , array))
+  return var
+
+gehalt = [1000, 1500, 1500, 20000, 3000, 2000]
+varianz(gehalt)
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Standardabweichung berechnen}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+import math
+
+def standard_abweichung(array):
+  n = len(array)
+  mn = sum(array) / n
+  var = (1 / (n-1)) * sum(
+    map(lambda xi: (xi-mn) ** 2 , array))
+  std = math.sqrt(var)
+  return std
+
+gehalt = [1000, 1500, 1500, 20000, 3000, 2000]
+standard_abweichung(gehalt)
+@
+\vspace{6ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Berechnung des Variationskoeffizienten (CV) I}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+import math
+def var_koeff(array):
+  n = len(array)
+  mn = sum(array) / n
+  var = (1 / (n-1)) * sum(map(
+    lambda x: (x - mn) ** 2 , array))
+  std = math.sqrt(var)
+  cv = std / mn
+  if 0 in array:
+    cv = cv / math.sqrt((n-1))
+  return cv
+  
+pizza_de = [4.99, 7.99, 5.99, 4.99, 6.99]
+var_koeff(pizza_de)
+@
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Überblick über die Daten beschaffen}
+\begin{itemize}
+\item Mit \textbf{describe()} kann man einen Überblick über die Daten erhalten. 
+\item Die Funktion stellt diverse Lagemaße als Ergebnis bereit und kann sowohl auf ein DataFrame als auch ein Series-Objekt angewendet werden.
+<<engine='python', eval=F>>=
+df.describe()
+@
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten zusammenfassen}
+<<engine='python', eval=F>>=
+# Read data
+df = sns.load_dataset('iris')
+
+# Dimension of the sepal length variable
+len(df["sepal_length"])
+
+# Minimum and maximum of the sepal length variable
+df["sepal_length"].min(); df["sepal_length"].max()
+
+# Mean of the sepal length variable
+df["sepal_length"].mean()
+# Variance of the sepal length variable
+df["sepal_length"].var()
+# Standard deviation of the sepal length variable
+df["sepal_length"].std()
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten zusammenfassen}
+\begin{itemize}
+\item Außerdem lassen sich die Daten in einfacher Weise aggregieren. Hierzu kann die Methode agg() genutzt werden, die als Parameter entweder eine einzelne Funktion oder eine Liste mit Funktionen übernimmt. 
+\item Hierbei ist es möglich, Funktionen zu verwenden, die dem DataFrame-Objekt als Methode zur Verfügung stehen. Die jeweilige Bezeichnung der Methode wird dann als Zeichenkette angegeben. 
+<<engine='python', eval=F>>=
+# Daten aggregieren, eigene Funktionen verwenden
+def sqrt_sum(array):
+    sum_array = sum(array)
+    return np.sqrt(sum_array)
+
+df.sepal_length.agg(["mean", "median", sum, sqrt_sum])
+@
+\vspace{10ex}
+\end{itemize}
+\end{frame}
+
+\subsection{Skewness \& Kurtosis}
+
+\begin{frame}[fragile]
+\frametitle{Skewness \& Kurtosis}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+# Import libraries
+import numpy as np
+import pandas as pd
+
+# Import kurtosis and skewness functions
+from scipy.stats import kurtosis
+from scipy.stats import skew
+
+# Create data
+data = np.random.normal(0, 1, 10000000)
+
+# Calculate skewness and kurtosis
+print("skew : ",skew(data))
+print("kurt : ",kurtosis(data))
+@
+\vspace{15ex}
+\end{frame}
+
+\subsection{Daten als Tabelle}
+
+\begin{frame}[fragile]
+\frametitle{Daten als Tabelle}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+# Filtering iris data
+speciesdf = df["species"]
+
+# Group by species
+speciesdf = pd.DataFrame(speciesdf.value_counts(sort=True))
+
+# Create new column with cumulative sum
+speciesdf["cum_sum"] = speciesdf["species"].cumsum()
+
+# Create new column with relative frequency
+speciesdf["cum_perc"] = 100*speciesdf["cum_sum"]/
+  speciesdf["species"].sum()
+
+# Show summary table
+speciesdf
+@
+\vspace{10ex}
+\end{frame}
+% http://gael-varoquaux.info/stats_in_python_tutorial/
+
+\begin{frame}[fragile]
+\frametitle{Daten als Tabelle}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+### Division at intervals and corresponding frequencies
+
+# Division of the interval in 10 equal parts, 
+# and the interval closed on right
+table = np.histogram(df["sepal_length"], 
+                     bins=10, range=(0, 10))
+
+print(table)
+
+# Division at fixed intervals, 
+# the buckets object indicates the limits of the intervals
+# the intervals should be closed on right.
+buckets = [0, 2, 4, 6, 8]
+table = np.histogram(df["sepal_length"], bins=buckets)
+
+print(table)
+@
+\vspace{10ex}
+\end{frame}
+% http://gael-varoquaux.info/stats_in_python_tutorial/
+
+%------------------------------------------------
+
+\subsection{Übung}
+\begin{frame}
+\frametitle{Do it yourself}
+\begin{itemize}
+\item Liest erneut den Datensatz \textbf{size.csv} in Python ein
+\item Berechnet die Minimal-, Durchschnitts- und Maximalgröße jeweils für Männer und für Frauen
+\item Wie viele Dateneinträge gibt es jeweils für Männer und für Frauen (Kontingenztafel)
+\item Berechnet Minimum, unteres Quartil, Median, oberes Quartile und Maximum der Schuhgrößen
+\item Gibt es eine stärkere Varianz und Standardabweichung in der Schuhgröße von Männern oder von Frauen?
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Datenvisualisierung}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Datenvisualisierung - Eine Kunst für sich}
+\vspace{-1ex}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 63 0 0, clip, width=0.75\textwidth]{figures/chart_types}}
+\end{figure}
+\vfill
+\end{frame}
+
+\subsection{Verteilung \& Zusammenhang}
+\begin{frame}
+\frametitle{Verteilung \& Zusammenhang}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 70 0 0, clip, width=\textwidth]{figures/distribution_correlation_ranking}}
+\end{figure}
+\vfill
+\end{frame}
+
+\subsection{Rangliste}
+\begin{frame}
+\frametitle{Rangliste}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 0 0 140, clip, width=\textwidth]{figures/distribution_correlation_ranking}}
+\end{figure}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Teil eines Ganzen \& Entwicklung}
+\begin{frame}
+\frametitle{Teil eines Ganzen \& Entwicklung}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 70 0 0, clip, width=\textwidth]{figures/part_evolution_maps}}
+\end{figure}
+\vfill
+\end{frame}
+
+\subsection{Karten \& Fluss}
+\begin{frame}
+\frametitle{Karten \& Fluss}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 0 0 140, clip, width=\textwidth]{figures/part_evolution_maps}}
+\end{figure}
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=0 70 0 0, clip, width=\textwidth]{figures/flow_other}}
+\end{figure}
+\vfill
+\end{frame}
+
+\subsection{Von den Daten zur Visualisierung}
+\begin{frame}
+\frametitle{Von den Daten zur Visualisierung}
+\vspace{-1ex}
+Es ist ganz einfach die passende Visualisierung zu deinen Daten zu finden.
+\vspace{-1ex}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.775\textwidth]{figures/poster_data_viz}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://www.data-to-viz.com/}{https://www.data-to-viz.com/}}
+\vfill
+\end{frame}
+
+\begin{frame}
+\frametitle{Von den Daten zur Visualisierung}
+Es ist ganz einfach die passende Visualisierung zu deinen Daten zu finden.
+\vspace{-2ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+\begin{enumerate}
+\item Identifiziere den vorliegenden Datentyp, z.B. kategorisch
+\end{enumerate}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[trim=400 865 1200 0, clip, width=0.9\textwidth]{figures/poster_data_viz}}
+\end{figure}
+\end{column}
+\end{columns}
+%\hfill \tiny{\href{https://www.data-to-viz.com/}{https://www.data-to-viz.com/}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Von den Daten zur Visualisierung}
+Es ist ganz einfach die passende Visualisierung zu deinen Daten zu finden.
+\vspace{-2ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+\begin{enumerate}
+\item Identifiziere den vorliegenden Datentyp, z.B. kategorisch
+\item Wähle den passenden Entscheidungsschlüssel und folge ihm zu einer Auswahl an Abbildungen.
+\end{enumerate}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[trim=690 1000 1380 150, clip, width=0.2\textwidth]{figures/poster_data_viz}}
+\end{figure}
+\end{column}
+\end{columns}
+%\hfill \tiny{\href{https://www.data-to-viz.com/}{https://www.data-to-viz.com/}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Von den Daten zur Visualisierung}
+Es ist ganz einfach die passende Visualisierung zu deinen Daten zu finden.
+\vspace{-2ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+\begin{enumerate}
+\item Identifiziere den vorliegenden Datentyp, z.B. kategorisch
+\item Wähle den passenden Entscheidungsschlüssel und folge ihm zu einer Auswahl an Abbildungen.
+\item Wähle die Abbildung die am besten zu deinen Daten und deinen Bedürfnissen passt.
+\end{enumerate}
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[trim=0 0 202 150, clip, width=0.9\textwidth]{figures/distribution_correlation_ranking}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Daten visualisieren mit Python}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Daten visualisieren mit Matplotlib}
+\begin{itemize}
+\item Die Bibliothek Matplotlib ist gewissermaßen der Standard zur Visualisierung von Ergebnissen in Python. 
+\item Das Paket wird konventionell wie folgt eingebunden:
+<<engine='python', eval=F>>=
+import matplotlib.pyplot as plt
+@
+\item Zusätliche verwenden wir die Bibliothek seaborn \& pandas:
+<<engine='python', eval=F>>=
+import seaborn as sns
+import pandas as pd
+@
+\item Diese Schreibweisen haben sich etabliert und sollten auch bei eigenen Projekten übernommen werden
+\item Die Websiten \href{https://www.data-to-viz.com/}{https://www.data-to-viz.com/} \& \href{https://python-graph-gallery.com/}{https://python-graph-gallery.com/} bieten Instruktionen zum \textbf{Finden der richtigen Graphik} und stellen \textbf{Code-Beispiele für jeden Visualisierungstypen zur Verfügung}.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Univariate Daten}
+
+\begin{frame}[fragile]
+\frametitle{Säulendiagramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.6\textwidth}
+<<engine='python', eval=F>>=
+import numpy as np
+import matplotlib.pyplot as plt
+ 
+# Make a fake dataset:
+height = [3, 12, 5, 18, 45]
+bars = ('A', 'B', 'C', 'D', 'E')
+y_pos = np.arange(len(bars))
+ 
+# Create bars
+plt.bar(y_pos, height)
+ 
+# Create names on the x-axis
+plt.xticks(y_pos, bars)
+
+plt.show() # Show graphic
+@
+\end{column}
+\begin{column}{0.4\textwidth}
+\vspace{10ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/1_basic_barplot}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Histogramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.6\textwidth}
+<<engine='python', eval=F>>=
+# Import library and dataset
+import seaborn as sns
+df = sns.load_dataset('iris')
+ 
+# Hist only
+sns.distplot( a=df["sepal_length"], 
+              hist=True, kde=False, 
+              rug=False )
+#plt.show()
+@
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/21_Display_Rug_and_distribution_on_hist1}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kuchen-Diagramm (Pie-Diagramm)}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+import pandas as pd # load Library
+
+df = pd.DataFrame([8,8,1,2], index=['a','b','c','d'], 
+                  columns=['x']) # just 4 values for 4 groups
+ 
+df.plot(kind='pie', subplots=True, figsize=(8, 8))
+@
+\vspace{-1ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=0.45\textwidth]{figures/140_basic_pieplot1}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Box-Plot}
+Nur eine numerische Variable
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+<<engine='python', eval=F>>=
+# library & dataset
+import seaborn as sns
+
+df = sns.load_dataset('iris')
+ 
+# Make boxplot for one group only
+sns.boxplot(y=df["sepal_length"])
+#plt.show()
+@
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/30_Basic_Box_seaborn1}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Bivariate (und multivariate) Daten}
+
+\begin{frame}[fragile]
+\frametitle{gestapeltes \& gruppiertes Säulendiagramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/12-stacked-barplot-with-matplotlib/}{\includegraphics[width=\textwidth]{figures/12_stacked_barplot}}}
+\end{figure}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/11-grouped-barplot/}{\includegraphics[width=\textwidth]{figures/12_grouped_barplot}}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Box-Plot}
+Eine numerische Variable und mehrere Gruppen
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.6\textwidth}
+\vspace{1ex}
+<<engine='python', eval=F>>=
+# library & dataset
+import seaborn as sns
+
+df = sns.load_dataset('iris')
+ 
+sns.boxplot(x=df["species"], 
+            y=df["sepal_length"])
+# plt.show()
+@
+\end{column}
+\begin{column}{0.4\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/30_Basic_Box_seaborn2}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Box-Plot}
+Mehrere numerische Variablen
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+\vspace{5ex}
+<<engine='python', eval=F>>=
+# library & dataset
+import seaborn as sns
+
+df = sns.load_dataset('iris')
+ 
+sns.boxplot(data=df.ix[:,0:2])
+# plt.show()
+@
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/30_Basic_Box_seaborn3}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{gruppierter Box-plot}
+Mehrere numerische Variablen und mehrere Gruppen
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+<<engine='python', eval=F>>=
+# library and dataset
+import seaborn as sns
+
+df = sns.load_dataset('tips')
+ 
+# Grouped boxplot
+sns.boxplot(x="day", 
+            y="total_bill", 
+            hue="smoker", 
+            data=df, 
+            palette="Set1")
+# plt.show()
+@
+\end{column}
+\begin{column}{0.5\textwidth}
+\vspace{2ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/34_Grouped_Boxplot_Seaborn}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Streudiagramm (Scatterplot)}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+<<engine='python', eval=F>>=
+# library & dataset
+import seaborn as sns
+
+df = sns.load_dataset('iris')
+ 
+# use the function regplot 
+# to make a scatterplot
+sns.regplot(x=df["sepal_length"], 
+            y=df["sepal_width"], 
+            fit_reg=False)
+# plt.show()
+@
+\end{column}
+\begin{column}{0.45\textwidth}
+\vspace{1ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/40_Basic_Scatterplot_seaborn}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{verbundenes Streudiagramm (Scatterplot)}
+%<<engine='python', eval=F>>=
+%# library and dataset
+%from matplotlib import pyplot as plt
+%import pandas as pd
+%import numpy as np
+%import seaborn as sns
+%
+%# Create data
+%df=pd.DataFrame({'x': range(1,101), 
+%  'y': np.random.randn(100)*15+range(1,101), 
+%  'z': (np.random.randn(100)*15+range(1,101))*2})
+% 
+%# plot with seaborn
+%plt.plot('x', 'y', data=df, marker='o', color='mediumvioletred')
+%plt.show()
+%@
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/106-seaborn-style-on-matplotlib-plot/}{\includegraphics[width=0.7\textwidth]{figures/106_seaborn_style_on_plt2}}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Liniendiagramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+\vspace{1ex}
+<<engine='python', eval=F>>=
+# libraries
+import matplotlib.pyplot as plt
+import numpy as np
+ 
+# create data
+values=np.cumsum(
+  np.random.randn(1000,1))
+ 
+# use the plot function
+plt.plot(values)
+@
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/120_Basic_lineplot1}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Flächendiagramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.55\textwidth}
+\vspace{1ex}
+<<engine='python', eval=F>>=
+# library
+import numpy as np
+import matplotlib.pyplot as plt
+ 
+# Create data
+x=range(1,6)
+y=[1,4,6,8,4]
+ 
+# Area plot
+plt.fill_between(x, y)
+plt.show()
+@
+\end{column}
+\begin{column}{0.45\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/240_basic_area_chart}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{gestapeltes Flächendiagramm}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.6\textwidth}
+<<engine='python', eval=F>>=
+# library
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Your x and y axis
+x=range(1,6)
+y=[ [1,4,6,8,9], 
+    [2,2,7,10,12], 
+    [2,8,5,10,6] ]
+ 
+# Basic stacked area chart.
+plt.stackplot(x,y, 
+              labels=['A','B','C'])
+plt.legend(loc='upper left')
+plt.show()
+@
+\end{column}
+\begin{column}{0.4\textwidth}
+\vspace{7ex}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\includegraphics[width=\textwidth]{figures/250_basic_stacked_area_chart}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Heatmap}
+%\vspace{-5ex}
+%\begin{columns}[t]
+%\begin{column}{0.6\textwidth}
+%<<engine='python', eval=F>>=
+%# library
+%import seaborn as sns
+%import pandas as pd
+%import numpy as np
+% 
+%# Create a dataset (fake)
+%df = pd.DataFrame(np.random.random((5,5)), 
+%                  columns=["a","b","c","d","e"])
+% 
+%# Default heatmap
+%# just a visualization of this square matrix
+%p1 = sns.heatmap(df)
+%@
+%\end{column}
+%\begin{column}{0.4\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/90-heatmaps-with-various-input-format/}{\includegraphics[width=0.65\textwidth]{figures/90_Input_format_for_heatmap1}}}
+\end{figure}
+%\end{column}
+%\end{columns}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Netzdiagramm}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/390-basic-radar-chart/}{\includegraphics[width=\textwidth]{figures/390_basic_Radarchart}}}
+\end{figure}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/391-radar-chart-with-several-individuals/}{\includegraphics[width=\textwidth]{figures/391_Several_indiv_Radarchart}}}
+\end{figure}
+\end{column}
+\end{columns}
+\vspace{30ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Netzdiagramm}
+\begin{figure}
+\makebox[\textwidth]{%Left, bottom, right, top
+\href{https://python-graph-gallery.com/392-use-faceting-for-radar-chart/}{\includegraphics[width=0.6\textwidth]{figures/393_Faceting_and_Radarchart2}}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Grafiken speichern}
+
+\begin{frame}[fragile]
+\frametitle{Grafiken speichern}
+Matplotlib stellt die Funktion \textbf{savefig()} bereit, mit der Plots direkt als Datei gespeichert werden können:
+<<engine='python', eval=F>>=
+plt.savefig('plot.png')
+@
+Um das Datei-Format zu ändern, muss man lediglich die Datei-Endung anpassen:
+<<engine='python', eval=F>>=
+plt.savefig('plot.pdf')
+@
+Die Datei lässt sich dann öffnen, durch:
+<<engine='python', eval=F>>=
+display plot.png
+@
+\vspace{10ex}
+\end{frame}
+
+\subsection{Caveats bei der Datenvisualisierung}
+\begin{frame}[fragile]
+\frametitle{Caveats bei der Datenvisualisierung}
+\begin{itemize}
+\item \href{https://www.data-to-viz.com/caveat/order_data.html}{Sortieren der Daten macht das Diagramm viel aufschlussreicher}
+\item \href{https://www.data-to-viz.com/caveat/spaghetti.html}{Vermeidet Spaghetti-Diagramme (Liniendiagramm mit zu vielen Linien).}
+\item \href{https://www.data-to-viz.com/caveat/pie.html}{Vermeidet Tortendiagramme, da das menschliche Auge Winkel schlecht lesen kann.}
+\item \href{https://www.data-to-viz.coam/caveat/bin_size.html}{Das Ändern der Bin-Größe eines Histogramms kann zu unterschiedlichen Erkenntnissen führen.}
+\item \href{https://www.data-to-viz.com/caveat/boxplot.html}{Boxplots kaschieren den Stichprobenumfang und dessen Verteilung.}
+\item \href{https://www.data-to-viz.com/caveat/error_bar.html}{Vermeidet die Verwendung von Fehlerbalken.}
+\item \href{https://www.data-to-viz.com/caveat/multi_distribution.html}{Vermeidet die Darstellung von zu vielen Verteilungen.}
+\item \href{https://www.data-to-viz.com/caveat/overplotting.html}{Zu viele Punkte machen Streudiagramme unlesbar.}
+\item \href{https://www.data-to-viz.com/caveat/color_com_nothing.html}{Vermeidet Farben, wenn sie nichts aussagen.}
+\item \href{https://www.data-to-viz.com/caveat/stacking.html}{Bei gestappelten Diagrammen ist es schwierig jede dargestellte Gruppe zu analysieren.}
+\end{itemize}
+\vspace{1ex}
+\tiny{Eine Übersicht der häufigsten Caveats findet ihr hier: \href{https://www.data-to-viz.com/caveats.html}{https://www.data-to-viz.com/caveats.html}}
+\vspace{2ex}
+\end{frame}
+
+\subsection{Übung}
+\begin{frame}
+\frametitle{Do it yourself}
+\begin{itemize}
+\item Liest erneut den Datensatz \textbf{size.csv} in Python ein
+\item Erstellt einen geeignete Grafik um die Größe darzustellen
+\item Plottet die Größe in Zusammenhang zum Geschlecht
+\item Plottet die Schuhgröße gegen die Körpergröße
+\item Speichert die erstellten Grafiken als Datei
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Vielen Dank für eure Aufmerksamkeit!}
+%------------------------------------------------
+
+\end{document}

@@ -1,0 +1,61 @@
+me,Marke,Einkaufsort,Preis,Kategorie,Bio,Fair,crisp,nuss,traube,rum,chili,echte.vanille,cocos,Kakaogehalt,Gewicht,Anzahl.der.Inhaltsstoffe,Nussanteil,Crisps,Verfallsdatum
+Choceur Weisse Crisp,Choceur,Aldi,99,weiss,nein,nein,1,0,0,0,0,0,0,28,200,15,12,6,5
+Choceur Alpenvollmilch,Choceur,Aldi,35,vollmilch,nein,nein,0,0,0,0,0,0,0,30,100,10,0,0,9
+Choceur Haselnuss,Choceur,Aldi,35,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,10,12,0,9
+Nusskcker,Nusskcker,Aldi,55,vollmilch,nein,nein,0,1,0,0,0,0,0,32,100,9,25,0,6
+Happy Halloween,Meybo,Bio Bio,199,vollmilch,ja,nein,0,0,0,0,0,1,0,35,100,6,0,0,15
+S��es statt Saures,Meybo,Bio Bio,199,bitter,ja,nein,0,0,0,0,0,1,0,72,100,6,0,0,14
+Praline Rum,turata,Bio Bio,249,vollmilch,ja,nein,0,0,0,1,0,1,0,35,100,11,2,0,6
+Rum Traube Nuss,Rapunzel,Bio Bio,199,vollmilch,ja,nein,0,1,1,1,0,1,0,38,100,10,4,0,6
+Edelbitter Chili,Vivani,Bio Bio,199,bitter,ja,nein,0,0,0,0,1,0,0,70,100,4,0,0,17
+Weisse Knusper,Vivani,Bio Bio,159,weiss,ja,nein,1,0,0,0,0,1,0,29,100,6,0,5,15
+Feine Bitter,Vivani,Bio Bio,199,bitter,ja,nein,0,0,0,0,0,0,0,85,100,3,0,0,21
+Vollmilch Nuss,Vivani,Bio Bio,159,vollmilch,ja,nein,0,1,0,0,0,1,0,33,100,8,10,0,6
+Halbbitter,turata,Bio Bio,199,bitter,ja,nein,0,0,0,0,0,1,0,55,100,5,0,0,12
+LacoaZartbitter,Lacoa,Bio Bio,119,vollmilch,ja,nein,0,0,0,0,0,0,0,70,100,3,0,0,21
+LacoaVollmichschokolade,Lacoa,Bio Bio,119,vollmilch,ja,nein,0,0,0,0,0,1,0,33,100,7,0,0,16
+DunkleVollmilch,Rapunzel,Bio Bio,199,vollmilch,ja,nein,0,0,0,0,0,1,0,46,100,5,0,0,7
+Nirva,Rapunzel,Bio Bio,199,vollmilch,ja,nein,0,1,0,0,0,1,0,38,100,8,18,0,11
+CocosCreme,Rapunzel,Bio Bio,199,vollmilch,ja,nein,0,0,0,0,0,1,1,38,100,8,0,0,11
+Rapunzel Vollmilch,Rapunzel,Bio Bio,179,vollmilch,ja,nein,0,0,0,0,0,1,0,38,100,7,0,0,7
+FeineBitter,Vivani,Bio Bio,159,bitter,ja,nein,0,0,0,0,0,0,0,72,100,3,0,0,19
+EdelBitter,Vivani,Bio Bio,199,bitter,ja,nein,0,0,0,0,0,0,0,70,100,4,0,0,18
+Kids,Vivani,Bio Bio,159,vollmilch,ja,nein,0,0,0,0,0,1,0,33,100,10,0,0,2
+DunkleVoll-Nuss,Ritter Sport,Real,85,bitter,nein,nein,0,1,0,0,0,0,0,50,100,7,23,0,7
+Knusperflakes,Ritter Sport,Real,85,vollmilch,nein,nein,1,0,0,0,0,0,0,30,100,12,0,12,12
+Alpenmilch,Ritter Sport,Real,85,vollmilch,nein,nein,0,0,0,0,0,0,0,30,100,7,0,0,10
+Vollmilch,Ritter Sport,Real,85,vollmilch,nein,nein,0,0,0,0,0,0,0,30,100,10,0,0,10
+DunkleVollmilch,Ritter Sport,Real,85,vollmilch,nein,nein,0,0,0,0,0,0,0,40,100,9,0,0,10
+Halbbitter,Ritter Sport,Real,85,bitter,nein,nein,0,0,0,0,0,0,0,50,100,5,0,0,9
+Schoko-Duo,Ritter Sport,Real,85,NA,nein,nein,0,0,0,0,0,0,0,30,100,10,0,0,10
+GanzeMandel,Ritter Sport,Real,85,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,11,23,0,9
+KaramellNuss,Ritter Sport,Real,85,vollmilch,nein,nein,1,1,0,0,0,0,0,30,100,17,NA,3,8
+Nougat,Ritter Sport,Real,85,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,11,18,0,9
+WeisseVoll-Nuss,Ritter Sport,Real,85,weiss,nein,nein,1,1,0,0,0,0,0,0,100,12,23,3,8
+Voll-Nuss,Ritter Sport,Real,85,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,11,23,0,8
+Kuhflecken,Milka,Real,79,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,8,NA,0,10
+Alpenmilch,Milka,Real,79,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,9,NA,0,11
+GanzeHaselnuesse,Milka,Real,79,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,10,20,0,8
+Sahne-Creme,Milka,Real,79,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,11,NA,0,11
+Erdbeer-Joghurt,Milka,Real,79,NA,nein,nein,0,1,0,0,0,0,0,30,100,15,NA,0,11
+Vollmilch,RS,Real,119,vollmilch,nein,nein,0,0,0,0,0,0,0,33,100,6,0,0,3
+Edelbitterschokolade,RS,Real,119,bitter,nein,nein,0,0,0,0,0,0,0,70,100,5,0,0,11
+Haselnuss,RS,Real,119,vollmilch,nein,nein,0,1,0,0,0,0,0,30,100,7,23,0,3
+Kaffee-Sahne,RS,Real,119,vollmilch,nein,nein,0,0,0,0,0,0,0,30,100,10,0,0,6
+Schoko-Creme,Alpia,Real,49,vollmilch,nein,nein,0,0,0,0,0,0,0,28,100,10,0,0,3
+Zartbitter,Alpia,Real,49,bitter,nein,nein,0,0,0,0,0,0,0,50,100,6,0,0,11
+Haselnuss,Alpia,Real,49,vollmilch,nein,nein,0,1,0,0,0,0,0,28,100,10,9,0,4
+Joghurt,Alpia,Real,49,NA,nein,nein,0,0,0,0,0,0,0,28,100,13,0,0,1
+Alpenmilchcreme,Alpia,Real,49,NA,nein,nein,0,1,0,0,0,0,0,28,100,23,NA,0,3
+DieWeisse,Nestle,Real,89,weiss,nein,nein,0,0,0,0,0,1,0,0,100,5,0,0,8
+Dunkel,Lindt,Real,149,bitter,nein,nein,0,0,0,0,0,0,0,50,100,10,0,0,7
+GeroesteteHaselnuesse,Lindt,Real,149,vollmilch,nein,nein,0,1,0,0,0,0,0,NA,100,7,25,0,7
+ExtraDunkel,Lindt,Real,149,bitter,nein,nein,0,0,0,0,0,1,0,60,100,12,0,0,10
+Milch,Lindt,Real,149,vollmilch,nein,nein,0,0,0,0,0,0,0,45,100,11,0,0,9
+Amandes,Lindt,Real,270,weiss,nein,nein,0,1,0,0,0,0,0,0,150,7,32,0,6
+Noisettes,Lindt,Real,270,vollmilch,nein,nein,0,1,0,0,0,0,0,31,150,11,34,0,7
+Nougat-Nuss,Niederegger,Real,195,vollmilch,nein,nein,0,1,0,0,0,1,0,33,110,7,26,0,7
+Cardamom,Gepa,Weltladen,250,vollmilch,ja,ja,0,0,0,0,0,0,0,38,100,7,0,0,NA
+VeganeHaselnuss,Gepa,Weltladen,230,reismilch,ja,ja,0,1,0,0,0,0,0,44,100,8,NA,0,NA
+GrandNoir,Gepa,Weltladen,230,bitter,ja,ja,0,0,0,0,0,0,0,95,100,3,0,0,NA
+FleurdeSel,Gepa,Weltladen,250,vollmilch,ja,ja,0,0,0,0,0,0,0,37,100,6,0,0,NA

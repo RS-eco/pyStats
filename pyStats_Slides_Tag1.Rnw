@@ -1,0 +1,1859 @@
+\documentclass{beamer}
+\mode<presentation>{
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+\setbeamercolor{title}{bg=gray!10!white}
+\setbeamertemplate{itemize item}{\color{darkred}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{darkred}$\blacktriangleright$}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{enumerate item}{fg=darkred}
+\setbeamercolor{enumerate subitem}{fg=darkred}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{adjustbox}
+}
+
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+
+\title[Statistik Kurs]{Einführung in die Statistik mit Python}
+\author[RS-eco]{RS-eco} % Your name
+\institute[TUM]{Biodiversity \& Global Change Lab\\Technische Universität München \\ \vspace{1ex}
+\href{mailto:rs-eco@posteo.de}{rs-eco@posteo.de} \\ \vspace{1ex} 25. Oktober 2019} 
+\date{}
+\titlegraphic{\vspace{-5ex} \includegraphics[width=\textwidth]{figures/mountain_hist}}
+
+\begin{document}
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%------------------------------------------------
+\section{Einleitung}
+%------------------------------------------------
+
+\subsection{kurzes Kennenlernen} 
+\begin{frame}[fragile]
+\frametitle{kurzes Kennenlernen}
+Über mich:
+\begin{itemize}
+\item BSc Applied Marine Biology, Bangor University, UK
+\item MSc Global Change Ecology, Universität Bayreuth
+\item Seit 05/2017 Daten- und IT-Manager (seit 11/2018 an der TU München)
+\vspace{2ex}
+\item Geschlecht: Männlich
+\item Größe: 189 cm
+\item Schuhgröße: 43
+\end{itemize}
+\vspace{2ex}
+Und nun zu euch: Name, Disziplin, Größe, Schuhgröße, Erwartungen?
+\vspace{4ex}
+\end{frame}
+% Datenerhebung der Teilnehmer zur Verwendung am nächsten Tag!
+
+%------------------------------------------------
+
+\subsection{Was ist Statistik?} 
+\begin{frame}[fragile]
+\frametitle{Was ist Statistik?}
+\begin{itemize}
+\item ursprünglich: ''Die Lehre von den Daten über den Staat''
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[trim=50 220 50 50, clip, width=\textwidth]{figures/deutsches_volk}}
+\end{figure}
+\end{frame}
+
+\subsection{Was ist Statistik?} 
+\begin{frame}[fragile]
+\frametitle{Was ist Statistik?}
+Entwicklung und Anwendung formaler Methoden zur \textbf{Gewinnung, Beschreibung und Analyse} 
+sowie zur \textbf{Beurteilung quantitativer Beobachtungen (Daten)} - F. Vogel \\
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=.56\textwidth]{figures/data_stats}}
+\end{figure}
+\end{frame}
+
+\subsection{Was ist Statistik?} 
+\begin{frame}[fragile]
+\frametitle{Was ist Statistik?}
+Zusammenfassung von Methoden, die uns erlauben, \textbf{vernünftige optimale Entscheidungen im Falle von Ungewissheit} zu treffen. - A. Wald
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[trim=0 327 0 0, clip, width=0.7\textwidth]{figures/stats_probability}}
+\end{figure}
+\vspace{2ex}
+\end{frame}
+
+\subsection{Warum Statistik?} 
+\begin{frame}[fragile]
+\frametitle{Warum Statistik?}
+\begin{itemize}
+\item kompakte Darstellung gewonnener Daten
+\item Bestätigung oder Widerlegung einer Hypothese
+\item vernünftige Vorhersagen zukünftiger Ereignisse auf Basis aktueller Gegebenheiten
+\vspace{2ex}
+\item bildet die theoretische Grundlage aller empirischer Forschung
+\item vielfältige Anwendungsbereiche
+\item verzeichnet derzeit großes Wachstum (Big Data)
+\vspace{2ex}
+\item hilft Statistik in anderen wissenschaftlichen Arbeiten zu verstehen
+\item hilft Statistiken selbstständig zu beurteilen und Missbräuche und Fehler leichter zu durchschauen
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Begrifflichkeiten} 
+\begin{frame}[fragile]
+\frametitle{Begrifflichkeiten I}
+\begin{itemize}
+\item \textbf{deskriptive Statistik} \\
+Daten werden in geeigneter Weise beschrieben, aufbereitet und zusammengefasst, meist in Form von Tabellen, graphischen Darstellungen und Kennzahlen, z.B. Volkszählung.
+\vspace{2ex}
+\item \textbf{induktive Statistik} \\
+Herleitung von den Eigenschaften einer Grundgesamtheit, aus den Daten einer Stichprobe anhand von Schätz- und Testverfahren, z.B. Wahlprognosen.
+\vspace{2ex}
+\item \textbf{explorative Statistik} \\
+Systematische Suche von möglichen Zusammenhängen (oder Unterschieden) zwischen Daten in vorhandenen Datenbeständen
+\vspace{10ex}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Begrifflichkeiten II}
+\begin{itemize}
+\item \textbf{univariate Statistik} \\
+Isolierte Betrachtung einzelner Variablen
+\vspace{2ex}
+\item \textbf{bivariate Statistik} \\
+Gleichzeitige Betrachung von zwei Variablen. Ziel ist es, etwas über die Beziehung der beiden Variablen zu erfahren, d.h. ihren Zusammenhang.
+\vspace{2ex}
+\item \textbf{multivariate Statistik} \\ 
+Mehrere unabhängige oder abhängige Variablen werden gleichzeitig untersucht
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\subsection{Allgemeine Vorgehensweise} 
+\begin{frame}[fragile]
+\frametitle{Allgemeine Vorgehensweise}
+\textbf{1. Datenerhebung} \\
+\vspace{2ex}
+Sammeln und Auswerten von Daten. Bei einer Erhebung müssen die Daten nicht erst erzeugt werden, wie bei einem Experiment. 
+Man unterscheidet zwischen Vollerhebung und Teilerhebung. \\
+\vspace{2ex}
+\textbf{Vollerhebung} = Untersuchung einer Grundgesamtheit, die die ganze zu befragenede Masse darstellt \\
+\vspace{2ex}
+\textbf{Teilerhebung} = Entnahme einer Stichprobe der Grundgesamtheit (Nur ein Teil der ganzen Gruppe wird befragt)
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Allgemeine Vorgehensweise}
+\textbf{1. Datenerhebung} \\
+\vspace{2ex}
+Sammeln und Auswerten von Daten. Bei einer Erhebung müssen die Daten nicht erst erzeugt werden, wie bei einem Experiment. 
+Man unterscheidet zwischen Vollerhebung und Teilerhebung. \\
+\vspace{2ex}
+\textbf{2. Datenaufbereitung} \\
+\vspace{2ex}
+\begin{itemize}
+\item Datenkodierung
+\item Datenbereinigung (Plausibilitätsprüfung und Korrektur, Ausreißer, fehlende Werte) 
+\item Transformation der erhobenen Variablen \\
+\item Imputation von fehlenden Werte
+\end{itemize}
+\vspace{1ex}
+Konventionen und Zeichen präzisieren die Ergebnisse einer sorgfältigen Aufbereitung! \\
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Allgemeine Vorgehensweise}
+\textbf{1. Datenerhebung} \\
+\vspace{2ex}
+\textbf{2. Datenaufbereitung} \\
+\vspace{2ex}
+\textbf{3. Datenanalyse} \\
+\vspace{2ex}
+Anwendung von Methoden der explorativen, deskriptiven und induktiven Statistik. 
+Eine Analyse ohne eine geeignete Statistik-Software (z.B. Python) ist heutzutage kaum möglich. \\
+\vspace{2ex}
+\textbf{4. Interpretation} \\
+\vspace{2ex}
+\begin{itemize}
+\item unter Berücksichtigung des jeweiligen Fachgebietes
+\item treffsichere sprachliche Umsetzung der gewonnenen Ergebnisse
+\item Rückbezug auf aufgestellte Hypothesen und Fragestellungen
+\item Verweis und Querbezug auf andere wissenschaftlich gewonnene und valide Studienergebnisse
+\end{itemize}
+\vspace{4ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Achtung vor Fehlinterpretation}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.7\textwidth]{figures/bluttest}}
+\end{figure}
+\end{frame}
+\begin{frame}[fragile]
+\frametitle{Achtung vor Fehlinterpretation}
+Neuer Bluttest für Brustkrebs hat eine Trefferrate von 75 Prozent. \\
+\vspace{2ex}
+\textbf{Die Trefferrate allein sagt aber nichts über die Zuverlässigkeit eines Tests aus!} \\
+\vspace{1ex}
+=> Man muss immer zugleich die Falsch-Alarm-Rate kennen (z.B. wie häufig der Test bei gesunden Frauen fälschlicherweise einen Verdacht auf Krebs feststellt) \\
+\vspace{2ex}
+\textbf{Ein Beispiel:} Wenn man bei jeder Frau einen Tumor diagnostiziert, dann wird zwar jeder Tumor gefunden (Trefferrate = 100 \%), aber auch jede gesunde Frau wird falsch diagnostiziert (Falsch-Alarm-Rate = 100 \%).\\
+\vspace{2ex}
+Die Falsch-Alarm-Rate des neuen Bluttests ist 46 \% = knapp die Hälfte aller gesunden Frauen würden einen verdächtigen Befund erhalten! \\
+\vspace{1ex}
+=> Ist das wirklich eine Weltsensation?
+\vspace{10ex}
+\end{frame}
+
+\section{Datenerhebung}
+
+\subsection{Variablen}
+\begin{frame}[fragile]
+\frametitle{Variablen}
+\begin{itemize}
+\item Variablen sind Dinge, die wir messen, kontrollieren oder manipulieren. Sie unterscheiden sich in vielerlei Hinsicht, vor allem in der Rolle, die ihnen in unserer Forschung zukommt, und in der Art der Maßnahmen, die auf sie angewendet werden können.
+\vspace{1ex}
+\item Zur Vereinfachung der Nachvollziehbarkeit der Daten empfiehlt es sich, möglichst \textbf{selbsterklärende Variablennamen} zu verwenden, selbst wenn dies zu recht langen Bezeichnungen führt.
+\vspace{1ex}
+\item \texbf{Maßeinheiten} der gemessenen Variablen sollten immer im Datensatz enthalten sein. Hier empfiehlt sich die Maßeinheit an das Ende des Variablennamens zu stellen, z.B. \textbf{bodylength\_mm}.
+\vspace{1ex}
+\item \textbf{fehlende Werte} im Datensatz sollten konkret spezifiert sein (NA). Es macht einen großen Unterschied, ob Daten nicht gemessen wurden, ob sie den Wert 0 haben, oder ob es einen anderen Grund gibt, warum kein Eintrag erfolgt ist (z.B. selber Wert wie zuvor). 
+\end{itemize}¸
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Einflussgröße \& Zielgröße}
+Einflussgröße = beeinflusste/manipulierte Größe/Variable \\
+\vspace{1ex}
+Zielgröße = Merkmal, dass beinflusst wird, und damit Untersuchungsgegenstand ist. \\
+\vspace{2ex}
+\adjustbox{max height=\dimexpr\textheight-5.5cm\relax,
+max width=\textwidth}{
+\begin{tabular}{ccc} \hline
+x & \displaystyle y  & \displaystyle \varepsilon \\ \hline
+Einflussgröße & Zielgröße & Störgröße \\
+\textbf{unabhängige Variable} & \textbf{abhängige Variable} & variabler Rest \\
+Ursache & Wirkung & Nebenwirkung \\
+Stellgröße & Messgröße & Fehler \\
+Stimulus & Response & Nebenreaktion \\
+erklärende Variable & erklärte Variable & unerklärter Anteil \\
+%Prädiktor & Kriterium & Toleranz \\
+generierte Variable & Interessierende Variable & ignorierte Variable \\
+%Konstrukt & Zielvariable &  \\
+Treatment & Outcome & Nebeneffekt \\ \hline
+\end{tabular}
+}
+\vspace{2ex}
+\end{frame}
+
+\subsection{Messskalen}
+
+\begin{frame}[fragile]
+\frametitle{Messskalen}
+\begin{itemize}
+\item Variablen unterscheiden sich darin, wie gut sie gemessen werden können, d.h. wie viele messbare Informationen ihre Messskala liefern kann.
+\item Es ist offensichtlich, dass bei jeder Messung ein gewisser Messfehler vorliegt, der die Menge der Informationen bestimmt, die wir erhalten können.
+\item Ein weiterer Faktor, der die Menge an Informationen bestimmt, ist die Art der Messskala/des Skalenniveaus 
+\item Prinzipiell kann zwischen \textbf{quantitativen Merkmalen}, die auf einer metrischen Skala messbar sind (wie \textbf{Körpergewicht} oder Einkommen), und \textbf{qualitativen Merkmalen}(wie \textbf{Geschlecht} oder Farbe) unterschieden werden. 
+\item Im zweiten Fall spricht man auch von einem \textbf{kategorialen Merkmal}, da Ausprägungen in Form einer Kategorie angegeben werden. 
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Kategoriale Daten}
+\begin{frame}[fragile]
+\frametitle{Kategoriale Daten}
+Kategoriale Variablen umfassen eine endliche Anzahl von Kategorien oder eindeutigen Gruppen \\
+\vspace{2ex}
+\begin{itemize}
+\item \textbf{Boolesche Variable} = eine Variable, die nur zwei Zustände annehmen kann. Diese Zustände werden True und False (engl. für wahr und falsch) genannt und werden auch als Wahrheitswerte bezeichnet.
+\vspace{2ex}
+\item \textbf{Nominale Variable} = eine Variable, die mehrere Zustände annehmen kann, aber keine Rangordnung hat, z.B. Geschlecht oder Blutgruppe.
+\vspace{2ex}
+\item \textbf{Ordinale Variable} = Neben ihren Namen haben die Kategorien auch eine (gewisse) Rangordnung, z.B. Stadium einer Krankheit: Arterielle Verschluss krankheit (AVK) Stadium I, II, III, IV. Dies können auch metrische Variablen sein, die kategorisiert wurden (Beispiel: Variable „Einkommen“ mit den Kategorien „500–999 €“, „1000–1499 €“ usw.)
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Numerische Daten}
+\begin{frame}[fragile]
+\frametitle{Numerische Daten}
+\begin{itemize}
+\item \textbf{Intervalldaten} = kontinuierliche Daten, welche durch Messungen gesammelt werden, z.B. Körpergroße, Gewicht, Blutdruck, Cholesterin. Diese Daten können alle möglichen Werte annehmen und sind nur durch die Genauigkeit der Messung eingeschränkt.
+\item \textbf{Verhältnisvariablen} sind ebenfalls metrische Daten, im Unterschied zur Intervallskala existiert jedoch ein absoluter Nullpunkt (z. B. Blutdruck, absolute Temperatur, Lebensalter, Längenmaße). Bei diesem Skalenniveau sind Multiplikation und Division sinnvoll und erlaubt und Verhältnisse von Merkmalswerten dürfen gebildet werden. 
+\item \textbf{Absolute Variablen} sind numerische Daten mit einem natürlichen Nullpunkt und einer natürlich gegebenen Maßeinheit (d.h. im weitesten Sinne „Stück“), z.B. Bevölkerungsgröße eines Landes.
+\item Bei Absolutskalen kann die Skaleneinheit nicht frei gewählt werden. Absolutskalen sind eindeutig festgelegt und Skalentransformationen nicht erlaubt.
+\end{itemize}
+\end{frame}
+
+\subsection{Skalenniveaus}
+\begin{frame}[fragile]
+\frametitle{Skalenniveaus}
+\adjustbox{max height=\dimexpr\textheight-5.5cm\relax,
+max width=\textwidth}{
+\begin{tabular}{cccc} \hline
+\textbf{Skalenniveau} & \textbf{mathematische}  & \textbf{Messbare} & \textbf{Beispiel} \\ 
+& \textbf{Operationen} & \textbf{Eigenschaften} & \\ \hline
+Nominalskala & = / \neq & Häufigkeit & Postleitzahlen \\
+Ordinalskala & = / \neq; </> & Häufigkeit, Reihenfolge & Schulnoten \\
+Intervallskala & = / \neq; </>; -/+ & Häufigkeit, Reihenfolge,  & Zeitskala (Datum) \\
+&  & Abstand & \\
+Verhältnisskala & = / \neq; </>; -/+; \% ; x & Häufigkeit, Reihenfolge, & Alter \\ 
+&  & Abstand, natürlicher Nullpunkt & \\ \hline
+\end{tabular}
+}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.6\textwidth]{figures/skalenniveau}}
+\end{figure}
+Nominal: nur Häufigkeiten, ordinal: Reihenfolge, intervall: Abstände, verhältnisskaliert: Nullpunkt
+\vspace{4ex}
+\end{frame}
+
+\subsection{Stetige und diskrete Daten}
+\begin{frame}[fragile]
+\frametitle{Stetige und diskrete Daten}
+\begin{itemize}
+\item \textbf{Stetige Daten}
+\vspace{2ex}
+\begin{itemize}
+\item numerische Variablen, die zwischen zwei beliebigen Werten eine unendliche Anzahl von Werten aufweisen
+\item Stetige Variablen können aus numerischen oder Datums-/Uhrzeitwerten bestehen 
+\item Beispiel: die Länge eines Teils oder Datum und Uhrzeit eines Zahlungseingangs.
+\end{itemize}
+\vspace{2ex}
+
+\item \textbf{Diskrete Daten} 
+\vspace{2ex}
+\begin{itemize}
+\item numerische Variablen, die zwischen zwei beliebigen Werten eine bestimmte zählbare Anzahl von Werten aufweisen
+\item Diskrete Daten sind immer numerisch und enstehen nahezu ausnahmslos durch Zählungen. 
+\item Beispiel: Anzahl Kinder, Anzahl der Besuche beim Hausarzt im Jahr usw.
+\end{itemize}
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Häufbare und nicht-häufbare Merkmale}
+\begin{frame}[fragile]
+\frametitle{Häufbare und nicht-häufbare Merkmale}
+\begin{itemize}
+\item Ein Merkmal gilt dann als häufbar, wenn es hinsichtlich der gleichen statistischen Einheit mehrere Ausprägungen annehmen kann, es also eine oder mehrere Antworten geben kann
+\item z.B. Merkmale wie Hobby oder Berufsausbildung, da eine Person ganz verschiedene Hobbies ausüben oder auch mehrere Berufsausbildungen durchlaufen haben könnte.
+\item Andere Merkmale wie beispielsweise Geburtsjahr müssen dagegen als nicht-häufbar betrachtet werden, da es hier sinnigerweise nur eine korrekte Angabe geben kann.
+\item Die Frage der Häufbarkeit ist dann von großer Relevanz, wenn erhobene Daten in eine tabellarische Struktur überführt werden sollen
+\end{itemize}
+\vspace{2.5ex}
+\textbf{Es lohnt sich vor der Erfassung erhobener Daten am Rechner darüber nachzudenken, welche Tabellenstruktur sich für die vorliegenden Daten eignet.}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Skalenniveaus II}
+\begin{frame}[fragile]
+\frametitle{Skalenniveaus}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{figures/skalenniveaus}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Übung - Skalenniveaus und Variablentypen}
+Welches Skalenniveau (metrisch, nominal, ordinal) haben die folgenden Merkmale – und sind sie stetig oder diskret?
+\vspace{2ex}
+\begin{itemize}
+\item Wassertiefe eines Schwimmbeckens  - metrisch, stetig 
+\item Telefonnummern von Versandkunden  - nominal, diskret 
+\item Sorten von Speiseeis  - nominal, diskret 
+\item Schulnoten auf einer Skala von 1 bis 6  - ordinal, diskret 
+\item Abstand zwischen zwei Gebäuden in cm  - metrisch, stetig 
+\item Preis eines Neuwagens in Euro und Cent  - metrisch, diskret 
+\item Haarfarbe von Kundinnen im Friseursalon  - nominal, diskret 
+\item Temperatur eines glimmenden Holzscheits  - metrisch, stetig 
+\item Produktwertung auf einer Skala von 1 bis 5  - ordinal, diskret 
+\item Studiumsnoten auf einer Skala von 1,0 bis 5,0  - ordinal, diskret
+\end{itemize}
+\end{frame}
+%https://wissenschafts-thurm.de/grundlagen-der-statistik-worin-unterscheiden-sich-diskrete-und-stetige-merkmale-und-wann-sind-merkmale-haeufbar/
+
+\subsection{Datenstruktur}
+\begin{frame}[fragile]
+\frametitle{Datenstruktur}
+\begin{itemize}
+\item Idealerweise werden Daten als \textbf{.csv}-Datei gespeichert, diese können mit zahlreichen Programmen (z.B. Excel) geöffnet werden. Von einer Speicherung als .xls(x)-Datei ist abzusehen, da hier Änderungen der Einträge durch Formatierungs-Änderungen entstehen können.
+\end{itemize}
+\vspace{40ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Datenstruktur}
+\begin{itemize}
+\item Idealerweise werden Daten als \textbf{.csv}-Datei gespeichert, diese können mit zahlreichen Programmen (z.B. Excel) geöffnet werden.
+\item Streng genommen handelt es sich bei diesem Format um reine Textdateien, diese weisen jedoch eine bestimmte Struktur auf und sind sehr häufig innerhalb der Forschung bzw. allgemein im Datenmanagement anzutreffen. 
+\item CSV-Dateien können auch durch andere Zeichen getrennt sein, häufig ein Tab-Zeichen. Dann spricht man analog auch von „tab-separated values“ und Dateien im tsv-Format.
+\item Häufig kommt es zudem vor, dass Dateien zwar unter *.csv gespeichert werden, jedoch kein Komma als Trennzeichen genutzt wird.
+\item Ist nicht bekannt was für ein Trennzeichen verwendet wurde, muss die Datei mit einem Text-Editor geöffnet werden, um manuell das Trennzeichen zu bestimmen.
+\end{itemize}
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Datenstruktur}
+\begin{itemize}
+\item Daten sollten immer in einem von zwei Formaten strukturiert sein:
+\end{itemize}
+\vspace{3ex}
+\hspace{4ex} Einer \textbf{breiten Tabelle} \hspace{6ex} oder\hspace{7ex} einer \textbf{langen Tabelle}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[page=2, trim=220 430 490 340, clip, scale=1.6]{cheatsheets/data-import-cheatsheet}%Left, bottom, right, top
+}
+\end{figure}
+\vspace{25ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Erste Schritte mit Python}
+%------------------------------------------------
+
+\subsection{Was ist Python?} 
+\begin{frame}[fragile]
+\frametitle{Was ist Python?}
+Eine Schlangenfamilie
+\vspace{2ex}
+\begin{figure}
+\centering
+\begin{minipage}{0.35\textwidth}
+\centering
+\makebox[\textwidth]{
+\includegraphics[scale=0.2]{figures/python_snake}} 
+\end{minipage}\hfill
+\begin{minipage}{0.65\textwidth}
+\centering
+\makebox[\textwidth]{}
+\end{minipage}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Was ist Python?}
+Eine Schlangenfamilie \& eine Programmiersprache
+\vspace{2ex}
+\begin{figure}
+\centering
+\begin{minipage}{0.35\textwidth}
+\centering
+\makebox[\textwidth]{
+\includegraphics[scale=0.2]{figures/python_snake}} 
+\end{minipage}\hfill
+\begin{minipage}{0.65\textwidth}
+\centering
+\makebox[\textwidth]{
+\includegraphics[scale=0.55]{figures/python}}
+\end{minipage}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Was ist Python?}
+Aber auch eine Programmiersprache unter vielen:
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=1\textwidth]{figures/languages}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Warum Python?} 
+\begin{frame}[fragile]
+\frametitle{Warum Python?}
+Eine der am häufigsten verwendeten Programmiersprachen
+\begin{figure}
+\makebox[\textwidth]{
+% left bottom right top
+\includegraphics[trim=240 300 430 140, clip, scale=0.38]{figures/programming_language_usage}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Warum Python?}
+\begin{columns}[t]
+\begin{column}{0.7\textwidth}
+\begin{itemize}
+\item sehr vielseitig und flexibel
+\item leicht erlernbar
+\item platformunabhängig
+\item Open-Source
+\item Hochsprache statt Maschinensprache
+\item interpretierte Sprache
+\item Objekt-orientiert
+\item erweiterbar
+\item einbindbar in andere Sprachen und Programme
+\item verfügt über umfangreiche Bibliotheken
+\end{itemize}
+\vspace{2ex}
+\end{column}
+\begin{column}{0.3\textwidth}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[trim=0 400 900 0, clip, width=\textwidth]{figures/if-programming-languages-were-essays}}
+\end{figure}
+\end{column}
+\end{columns}
+\textbf{Sprachen lernt man, indem man sie spricht. Dies gilt für Python, wie für alle anderen Programmiersprachen.}
+\vspace{6ex}
+\end{frame}
+%See https://python.swaroopch.com/about_python.html
+
+\subsection{Python installieren} 
+\begin{frame}[fragile]
+\frametitle{Python installieren}
+Python kann unter "Downloads" von der offiziellen Website \href{www.python.org}{www.python.org} heruntergeladen werden. \\
+\vspace{1ex}
+Es wird zwischen Python2.7 und Python3.7 unterschieden. Bitte stellt sicher, dass ihr Python3.7 installiert habt, da die Schreibweise zwischen den beiden Versionen zum Teil leicht variiert. \\
+\vspace{1ex}
+Zur Statistik mit Python benötigen wir zusätzliche Pakete (NumPy, Pandas, matplotlib, seaborn, Scipy, statsmodel). Mit der \textbf{Anaconda Distribution} werden diese zusätzlichen Pakete automatisch installiert, aber auch nützliche Werkzeuge wie das Jupyter Notebook. \\
+\vspace{1ex}
+Die Anaconda Distribution kann von \href{www.anaconda.com/distribution}{www.anaconda.com/distribution} heruntergeladen werden. \\
+\vspace{1ex}
+Nach der Installation können Python-Befehle direkt in der Konsole des Betriebssystems geschrieben werden, dazu öffnet man zunächst die Konsole und gebt dort wiederum \textbf{python} ein (Kleinschreibung beachten!).
+\vspace{10ex}
+\end{frame}
+
+\subsection{IPython} 
+\begin{frame}[fragile]
+\frametitle{IPython - Interaktive Python Umgebung}
+Damit das Schreiben von Python-Code noch besser gelingt, gibt es ein paar Werkzeuge, oder Schreibumgebungen, die uns bei der Programmierung unterstützen. \\
+\vspace{1ex}
+IPython = Open Source Software, die das interaktive Programmieren in Python vereinfacht (Vervollständigung des Codes, Syntaxhervorhebung) \\
+\vspace{1ex}
+Um die interaktive Umgebung zu nutzen, gibt man einfach \textbf{ipython} in die Konsole ein. Alternativ kann IPython auch über die grafische Benutzeroberfläche, dem Anaconda Navigator, geladen werden. \\
+\vspace{1ex}
+Der weitere Vorteil der IPython Umgebung ist, dass man eine Code-Historie erhaltet, d. h. man kann mithilfe der Pfeiltasten durch den Code navigieren. \\
+\vspace{1ex}
+Mithilfe der Tabulator-Taste kann mann außerdem alle verfügbaren Methoden eines Objektes anzeigen lassen. \\
+\vspace{10ex}
+\end{frame}
+
+\subsection{Jupyter Notebooks} 
+\begin{frame}[fragile]
+\frametitle{Programmieren in Jupyter Notebooks}
+Jupyter Notebooks stehen auch mit der Anaconda Distribution bereit und können über den Anaconda Navigator geöffnet werden, oder indem man den Befehl \textbf{jupyter notebook} in die Konsole eingibt. \\
+\vspace{1ex}
+Bei einem Jupyter Notebook handelt es sich letztlich um nichts anderes als eine IPython-Konsole, die jedoch im Web-Browser läuft. \\
+\vspace{1ex}
+Ein neues Notebook kann man erstellen, indem man rechts auf „New“ klickt und dann „Python 3“ auswählt. \\
+\vspace{1ex}
+Der Vorteil ist, dass man den Code nicht nur speichern, sondern auch anderen Personen zur Verfügung stellen kann. Wenn man zum Beispiel eine Berechnung durchführt, dann bleibt das Ergebnis erhalten und man kann das Notebook anschließend exportieren und mit anderen teilen. \\
+\vspace{1ex}
+Mit Binder könnt ihr Jupyter Notebooks auch online verwenden (siehe \href{https://mybinder.org/}{https://mybinder.org/}), die Kursunterlagen könnt ihr hier öffnen: \href{https://hub.gke.mybinder.org/user/rs-eco-pystats-8b6ze63v/tree}{https://hub.gke.mybinder.org/user/rs-eco-pystats-8b6ze63v/tree}.
+\vspace{20ex}
+\end{frame}
+
+\subsection{Spyder} 
+\begin{frame}[fragile]
+\frametitle{Programmieren in Entwicklungsumgebungen (Spyder)}
+Zusätzlich steht zur Programmierung auch die Entwicklungsumgebung „Spyder“ zur Verfügung, die ebenfalls in der Anaconda Distribution integriert wurde. Auch Spyder kann mithilfe des Anaconda Navigators oder der Konsole geöffnet werden. Der Konsolen-Befehl lautet einfach \textbf{spyder}. \\
+\vspace{1ex}
+Der Name Spyder steht für „Scientific Python Development Environment“ und ist besonders für Forschungsarbeiten interessant, weil Sie mit
+dem „Variable Explorer“ ein Programm-Feature bereitstellt, das anderen Entwicklungsumgebungen fehlt. \\
+\vspace{1ex}
+Immer dann also, wenn man mit Tabellen arbeitet (bzw. Datensätzen), ist dieser Explorer sehr hilfreich, um einen besseren Einblick in die
+Daten zu erhalten. \\
+\vspace{1ex}
+Neben dieser Komponente bietet Spyder noch einen Editor zum Schreiben von Programmcode sowie eine IPython-Konsole an, aber auch einen Debugger, mit dem sich Fehler im Code leichter finden lassen. \\
+\vspace{10ex}
+\end{frame}
+
+\subsection{"Pythonic" Code schreiben} 
+\begin{frame}[fragile]
+\frametitle{Python Konventionen}
+\begin{itemize}
+\item Ein Name beginnt mit einem Großbuchstaben (A-Z), Kleinbuchstaben (a-z) oder einem Unterstrich ( \_ )
+\item \textbf{Namen enthalten niemals Leerzeichen!}
+\item Python akzeptiert die Zeichen @, \$ und \% in den Namen nicht. 
+\item Ein Python Befehl wird normalerweise auf eine Zeile geschrieben und das Zeilenende bedeutet Ende des Befehls
+\item Für Befehle über mehrere Zeilen, benutzt man das Zeichen \textbackslash um Python zu informieren, dass der Befehl auch die nächste Zeile betrifft.
+<<engine='python', eval=F>>=
+value  = 1   +  \
+2 +  \
+3
+@
+\vspace{10ex}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Python Konventionen}
+\begin{itemize}
+\item Ein Name beginnt mit einem Großbuchstaben (A-Z), Kleinbuchstaben (a-z) oder einem Unterstrich ( \_ )
+\item \textbf{Namen enthalten niemals Leerzeichen!}
+\item Python akzeptiert die Zeichen @, \$ und \% in den Namen nicht. 
+\item Ein Python Befehl wird normalerweise auf eine Zeile geschrieben und das Zeilenende bedeutet Ende des Befehls
+\item Für Befehle über mehrere Zeilen, benutzt man das Zeichen \textbackslash um Python zu informieren, dass der Befehl auch die nächste Zeile betrifft.
+\item Man kann mehrere Befehle auf eine Zeile schreiben, diese werden dann mit einem ; voneinander getrennt
+<<engine='python', eval=F>>=
+a = "One"; b = "Two"; c= "Three"
+@
+\item Um eine Zeichenkette (String) zu schreiben, verwendet man Anführungszeichen (') oder (")
+<<engine='python', eval=F>>=
+str1 = 'Hello every body'
+@
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Python Konventionen}
+\begin{itemize}
+\item Für einen Zeichenkette über mehrere Zeilen, verwendet man 3 Anführungszeichen ('') ohne das Zeichen $\textbackslash$ zu benutzen
+<<engine='python', eval=F>>=
+multiLineStr = """This is a paragraph. It is
+    made up of multiple lines and sentences."""
+@
+\item Kommentare beginnen immer mit einem \#
+<<engine='python', eval=F>>=
+# First comment
+print("Hello, Python!") # second comment
+
+# This is a comment.
+# This is a comment, too.
+# This is a comment, too.
+print("Finish")
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+%See https://o7planning.org/de/11389/konventionen-und-grammatik-versionen-in-python
+
+\begin{frame}[fragile]
+\frametitle{PEP8 - der Stil-Guide für Python Code}
+\begin{itemize}
+\item zur Einrückung 4 Leerzeichen verwenden
+\item Zeilenlänge auf 79 Zeichen begrenzen
+%\item lange Zeilen mit Rundklammern umbrechen, nicht mit einem $\textbackslash$
+%
+\item Module in folgender Reihenfolge importieren:
+\begin{itemize}
+\item Standard Bibliothek
+\item Module von Drittanbietern
+\item lokale Module
+\end{itemize}
+\item ein Import pro Zeile
+\item sogenannte „wildcard imports“ vermeiden (from module import *)
+\end{itemize}
+\vspace{6ex}
+Auf der Seite \href{www.pep8.org}{www.pep8.org} werden noch weitere Aspekte benannt und exemplarisch aufgezeigt.
+\vspace{6ex}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Do it yourself}
+\begin{frame}[fragile]
+\frametitle{Do it yourself - Python als Taschenrechner}
+\vspace{-2ex}
+<<python_calc, engine='python', eval=F>>=
+# Addition
+2 + 3
+# Subtraktion
+3.3 - 2
+# Multiplikation
+2 * (3.141 - 2)
+# Division
+10 / 4
+# Division ohne Rest
+10 // 4
+# Modulo bzw. Rest
+10 % 3
+# Potenz
+5 ** 5
+@
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Do it yourself - Hello World}
+<<hello-world, engine='python', eval=F>>=
+# Hello World
+print("Hello World.")
+
+# Simple output
+print("Hello, I'm Python!")
+@
+
+<<hi-python, engine='python', eval=F>>=
+# Input, assignment
+name = input('What is your name?\n')
+print('Hi, %s.' % name)
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Do it yourself - Namensräume in Python}
+<<engine='python', eval=F>>=
+# Import pi from Math package
+from math import pi
+
+# Print pi
+print(pi) # 3.14159
+
+# Define a variable, also called pi
+pi = 2
+
+# Print pi
+print(pi)
+@
+\vspace{10ex}
+\end{frame}
+
+\section{Python verstehen und anwenden}
+
+\subsection{Datentypen: Zahlen und Zeichenketten}
+\begin{frame}[fragile]
+\frametitle{Datentypen: Zahlen und Zeichenketten}
+\begin{itemize}
+\item 3 Zahlenformate:
+\begin{itemize}
+\item Ganzzahlen (int)
+\item Dezimal- bzw. Fließkommazahlen (float) 
+\item (komplexe Zahlen (complex))
+\vspace{1ex}
+\end{itemize}
+\item Dezimalzahlen werden nicht mit einem Komma sondern einem Punkt markiert!
+\vspace{1ex}
+\item Zeichenketten (str) sind eine Aneinanderreihung von Zeichen, Leerzeichen oder weiteren Symbolen (Kann man als Text verstehen).
+\vspace{1ex}
+\item \textbf{Achtung:} Nicht nur Buchstaben sondern auch Zahlen können als Buchstaben interpretiert werden.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Zeichenketten festlegen}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+# einfache Anführungszeichen
+x = 'Hallo Welt.'
+
+# doppelte Anführungszeichen
+y = "Hallo Welt."
+print(x ==y)
+
+quote1 = "Sie sagte 'Hallo' zu mir."
+quote2 = 'Sie sagte "Hallo" zu mir.'
+print(quote1 == quote2)
+
+# Eine mehrzeilige Zeichenkette
+z = """Diese Zeichenkette besteht aus mehreren Zeilen.
+Das hier ist die zweite Zeile,
+das ist die dritte."""
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Methoden von Zeichenketten}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+<<engine='python'>>=
+s = "Hallo Welt"
+
+s.lower()
+s.upper()
+s.startswith("H")
+s.endswith("x")
+@
+
+\end{column}
+\begin{column}{0.5\textwidth}
+<<engine='python'>>=
+s = "Hallo Welt"
+
+s.isdigit()
+str.isdigit("6")
+s.split(" ")
+"-".join(s.split(" "))
+@
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Indexierung von Zeichenketten}
+\vspace{-5ex}
+\begin{columns}[t]
+\begin{column}{0.5\textwidth}
+<<engine='python'>>=
+n = "0123456789"
+
+n[0]
+n[0:3] == n[:3]
+n[0:9]
+@
+
+\end{column}
+\begin{column}{0.5\textwidth}
+<<engine='python'>>=
+n = "0123456789"
+
+n[:]
+n[::2]
+n[1::2]
+n[::-1]
+@
+\end{column}
+\end{columns}
+\vspace{10ex}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Datencontainer: Listen, Dictionaries, Tuple und Sets}
+\begin{frame}[fragile]
+\frametitle{Listen (list)}
+\begin{itemize}
+\item Listen sind Datencontainer, die leer sein bzw. beliebig viele sowie auch unterschiedliche Datentypen enthalten können
+\item Oftmals wird eine Liste auch als Array bezeichnet, diese beinhalten jedoch (oftmals) nur einen Datentyp.
+\item Eine (leere) Liste wird durch eckige Klammern erstellt.
+\item Mit der Funktion list() können Objekte in eine Liste konvertiert werden.
+\item Listen haben den Vorteil, Elemente mehrfach enthalten zu können.
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listen erstellen}
+<<engine='python', eval=F>>=
+# leere Listen erstellen
+liste_leer1 = []
+liste_leer2 = list()
+liste_leer1 == liste_leer2
+
+# Listen erstellen mit unterschiedlichen Datentypen
+liste_inhalt = [1, 2.0, "drei", ["Hallo", "Welt"], 
+                {"key":"value"}]
+liste_inhalt
+
+# list()-Funktion auf Objekte anwenden
+list("Hello")
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Methoden von Listen}
+<<engine='python', eval=F>>=
+liste1 = []
+liste2 = [4, 5]
+liste3 = [4, 3, 2, 5, 1]
+
+liste1.append(1) # Element anfügen
+liste1.extend(liste2) # Liste erweitern
+liste1.pop() # letztes Element herauslösen
+liste3.sort() # Liste sortieren
+liste3.remove(3) # spezifisches Element entfernen
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Indexierung von Listen}
+Auf die Inhalte einer Liste können wir ebenfalls durch Indexierung zugreifen, wobei ein Index auch hier auf die Position eines Elementes verweist. \\
+\vspace{1ex}
+Wir erinnern uns, da in Python die Zählung bei „0“ beginnt, besitzt das erste Element einer Liste folglich als entsprechenden Index eben diesen Wert. \\
+<<engine='python', eval=F>>=
+# Zuerst erstellen wir eine Liste
+liste = [9, 8, 7, 6, 5, 4]
+
+# Nun indexieren wir die Liste
+liste[1:3]
+liste[:2]
+liste[3:]
+liste[1::2]
+liste[-1::-1]
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listen anwenden}
+<<engine='python'>>=
+# List comprehensions
+fruits = ['Banana', 'Apple', 'Lime']
+loud_fruits = [fruit.upper() for fruit in fruits]
+print(loud_fruits)
+@
+<<engine='python'>>=
+# List and the enumerate function
+list(enumerate(fruits))
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listen entschachteln}
+Listen können verschachtelt sein, mit der Bibliothek \textit{itertools} lassen sich verschachtelte Listen in Einzellisten konvertieren. \\
+<<engine='python'>>=
+import itertools
+
+liste = [[1,2,3], [4, 5, 6]]
+chain1 = list(itertools.chain(*liste))
+chain2 = list(itertools.chain.from_iterable(liste))
+
+print(chain1 == chain2)
+
+print(chain1)
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Dictionaries (dict)}
+\begin{itemize}
+\item Ein Dictionary wird durch geschweifte Klammern instanziiert und erhält zudem ein
+Schlüssel-Wert-Paar (Key-Value-Pair), wobei jeder Schlüssel (jeder Key) nur einmal
+vorhanden ist.
+\item Auch ein Dictionary kann bei der Instanziierung leer bleiben.
+\item Sollen jedoch Werte übergeben werden, wird zunächst der Schlüssel geschrieben, danach
+folgt – getrennt durch einen Doppelpunkt – der dazugehörige Wert
+\end{itemize}
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ein Dictionary-Objekt erstellen}
+<<engine='python', eval=F>>=
+# Dictionary mit geschweiften Klammern instanziieren
+d = {"key1": "val1", "key2": "val2"}
+
+# dict indexing
+print(d["key2"])
+
+# Werte ändern
+d["key2"] = "val2_neu"
+print(d["key2"])
+
+# Dictionary mit dict-Funktion
+dict(hallo="welt")
+
+dict(1="eins")
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ein Dictionary sortieren}
+<<engine='python'>>=
+d = {3: "drei", 1: "eins", 2: "zwei"}
+
+d_sorted = {k:v for (k,v) in 
+  sorted(d.items(), key=lambda x: x[0])}
+
+print(d_sorted)
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ein Dictionary sortieren}
+\vspace{-2ex}
+<<engine='python'>>=
+# Einfacher Datenabgleich mithilfe von Key-Value-Paaren
+de_en = {"Hallo": "hello", "Welt": "world", 
+  "du": "you", "bist": "are", "schön": "beautiful",}
+
+trans = (de_en.get("Hallo"), de_en.get("Welt"), 
+         de_en.get("du"), de_en.get("bist"), 
+         de_en.get("schön"),)
+
+print("{} {}, {} {} {}!".format(*trans)) # tuple unpacking
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Einem Dictionary neue Werte hinzufügen}
+<<engine='python'>>=
+# default Parameter ändern
+de_en.get("großartig", "Wort nicht vorhanden")
+@
+<<engine='python'>>=
+# Key-Value-Paar hinzufügen per Zuweisung
+de_en["großartig"] = "awesome"
+
+# Key-Value-Paar hinzufügen per update()-Methode
+de_en.update({"großartig": "awesome"})
+
+de_en.get("großartig", "Wort nicht vorhanden")
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Wert-Mapping}
+\begin{itemize}
+\item Text in Zahlen umwandeln
+<<engine='python'>>=
+antworten = ["gut", "ok", "schlecht", "sehr gut", 
+             "sehr schlecht", "weiß nicht", "so lala",]
+
+mapping = {"sehr schlecht": -2, "schlecht": -1, "ok": 0, 
+  "gut": 1, "sehr gut": 2, "weiß nicht": 8,}
+
+numerisch = [mapping.get(antwort, 99) 
+             for antwort in antworten]
+@
+\item Mapping erstellen aus zwei Listen
+<<engine='python'>>=
+labels = ["negativ", "neutral", "positiv"]
+number = [-1, 0, 1]
+mapping = {n: l for (n, l) in zip(number, labels)}
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Tuple (tuple)}
+\begin{itemize}
+\item Tuple sind weitere Datencontainer, jedoch mit der Besonderheit, dass sie unveränderbar sind („immutable“), man Werte also nicht überschreiben kann.
+\item Ein Tuple ist also ein Datentyp mit festen Werten und wird mit Rundklammern instanziiert. 
+\end{itemize}
+<<engine='python', eval=F>>=
+t = ("Hallo", "du", "schöne", "Welt")
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Tuple (tuple)}
+\begin{itemize}
+\item Tuple sind weitere Datencontainer, jedoch mit der Besonderheit, dass sie unveränderbar sind („immutable“), man Werte also nicht überschreiben kann.
+\item Ein Tuple ist also ein Datentyp mit festen Werten und wird mit Rundklammern instanziiert. 
+\item Ferner verfügt es lediglich über die Methoden count() und index(). 
+\item Weil ihre Daten nicht verändert werden können, werden Tuple vor allem dann eingesetzt, wenn die
+Datenintegrität eine große Rolle spielt.
+\item Zudem können sie in einfacher Weise „entpackt“ werden, das sogenannte „Unpacking“. 
+\end{itemize}
+<<engine='python', eval=F>>=
+t = ("Hallo", "du", "schöne", "Welt")
+
+# tuple unpacking
+x, *y, z = t
+
+print(x); print(y)
+@
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Tuple (tuple)}
+\begin{itemize}
+\item Tuple sind weitere Datencontainer, jedoch mit der Besonderheit, dass sie unveränderbar sind („immutable“), man Werte also nicht überschreiben kann.
+\item Ein Tuple ist also ein Datentyp mit festen Werten und wird mit Rundklammern instanziiert. 
+\item Ferner verfügt es lediglich über die Methoden count() und index(). 
+\item Weil ihre Daten nicht verändert werden können, werden Tuple vor allem dann eingesetzt, wenn die
+Datenintegrität eine große Rolle spielt.
+\item Zudem können sie in einfacher Weise „entpackt“ werden, das sogenannte „Unpacking“. 
+\item Hilfreich ist diese Art der Zuweisung besonders bei der schnellen Vergabe von Namen für Variablen bzw. Objekten.
+\item Werden in einem Tuple drei Werte gespeichert, müssen wir das Tuple nicht drei Mal aufrufen, sondern lediglich einmal.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Unpacking}
+\begin{itemize}
+\item Unpacking funktioniert auch mit Datencontainer: Listen, Dictionaries, Tuple und Sets Listen.
+<<engine='python', eval=F>>=
+# list unpacking
+liste = ["Hallo", "du", "schöne", "Welt"]
+a, *b, c = liste
+
+print(b)
+@
+\vspace{2ex}
+\item Stehen dabei weniger Variablen zur Verfügung, als Werte vorhanden sind, kann mithilfe des Asterisk-Zeichens (*) auch signalisiert werden, dass eine Variable mehrere Werte beinhalten soll – diese werden dann in einer Liste gespeichert.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Set / Frozenset (set, frozenset)}
+\begin{itemize}
+\item Bei einem Set handelt es sich um eine Menge, die ihre Elemente genau einmal beinhaltet.
+\item Ein Set ist prinzipiell ungeordnet und kann verändert werden. Mit anderen Worten, Sets sind „mutable“, d. h. man kann ihnen Werte hinzufügen oder auch entfernen.
+\item Ein Set wird auch, ähnlich zu einem Dictionary, mit geschweiften Klammern instanziiert – jedoch ohne die die Schlüssel-Wert-Beziehung, sondern lediglich als Aufzählung. 
+\item Ein Sonderfall stellt das Frozenset dar. Dabei handelt es sich um ein Set, das jedoch unveränderlich ist. Folglich können hier keine Werte entfernt bzw. hinzugefügt werden.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Sets und ausgewählte Methoden}
+\vspace{-2ex}
+<<engine='python', eval=F>>=
+s1 = {1, 2, 3, 4}
+liste = [1, 3, 5, 7, 7, 3, 1]
+s2 = set(liste)
+
+s1.union(s2) ## set([1, 2, 3, 4, 5, 7])
+s2.union(s1) ## set([1, 2, 3, 4, 5, 7])
+
+s1.intersection(s2) ## set([1, 3])
+s2.intersection(s1) ## set([1, 3])
+
+s1.difference(s2) ## set([2, 4])
+s2.difference(s1) ## set([5, 7])
+
+s1.add(8)
+fset = frozenset(liste)
+fset.add(8)
+@
+\vspace{10ex}
+\end{frame}
+%------------------------------------------------
+
+\subsection{Kontrollfluss: Programme mit Bedingungen steuern}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollfluss: Programme mit Bedingungen steuern}
+\begin{itemize}
+\item Die meisten Programme bzw. Aufgaben sind weitaus komplexer, als nur das Speichern von Einzeldaten
+\item Oft ist der Ablauf eines Programms an bestimmte Bedingungen geknüpft und einige Aufgaben sollen nur dann erledigt werden, wenn eine Bedingung erfüllt ist, sonst soll etwas anderes mit den Daten geschehen.
+\item Dieser Kontrollfluss lässt sich mit Wahrheitswerten steuern, die wiederum mithilfe von Vergleichsoperatoren kombiniert werden können. 
+\end{itemize}
+\vspace{2ex}
+\textbf{Auch hier gilt: Die Programmanweisungen muss konkret formuliert sein, denn der Computer versteht nur das, was man ihm direkt mitteilt.}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{None, True, False}
+\begin{itemize}
+\item Die Steuerung wird im Wesentlichen mithilfe der Werte \textbf{None, True und False} vorgenommen:
+<<engine='python'>>=
+False == 0
+
+True == 1
+
+None == False
+
+not None == True
+@
+
+\item Der Wert True wird zurückgegeben, wenn Variablen nicht den Wert None oder False erhalten, ein beliebiger Zahlentyp den Wert 1 hat, oder ein Datencontainer bzw. eine Daten-Sequenz nicht leer ist.
+\item Das bedeutet im Umkehrschluss, dass immer dann False ausgegeben wird, wenn keine Werte vorhanden sind bzw. bestimmte
+Bedingungen falsch sind. 
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{None, True, False}
+\begin{itemize}
+\item Dies können wir uns zunutze machen, um Abfragen an Bedingungen zu knüpfen.
+<<engine='python', eval=F>>=
+if True:
+  do_this(stuff)
+else:
+  do_that(stuff)
+@
+\item Ausführung nur dann, wenn die Bedingung den Wert \textbf{True} annimmt.
+\item Dies lässt sich direkt angeben („if True“), oder indirekt anhand der Evaluation von Werten („if x“)
+<<engine='python', eval=F>>=
+x = []
+if x:
+  print("Die Liste ist gefüllt.")
+else:
+  print("Die Liste ist leer.")
+@
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Vergleiche vornehmen}
+\begin{itemize}
+\item Bedingungen lassen sich auch kombinieren, hierzu stehen zum Beispiel die Schlüsselwörter \textbf{and} und \textbf{or} bereit, die jeweils auch mit dem Wort \textbf{not} negiert werden können.
+\item Zudem kann das Schlüsselwort \textbf{in} genutzt werden, um die Existenz eines Wertes in einem Objekt zu überprüfen.
+\item Stellen wir uns folgendes Szenario vor:
+\vspace{1ex}
+\begin{itemize}
+\item Wir haben eine Umfrage durchgeführt und wollten nun prüfen, ob alle Angaben vollständig sind. 
+\item Oftmals wird die Angabe „weiß nicht“ mit dem Wert 8 codiert.
+\item Haben wir beispielsweise fünf Fragen gestellt, die jeweils mit Werten von 1 bis 5 beantwortet werden können (und 8 bei „weiß nicht“), dann können wir mit jenen Schlüsselwörtern testen, ob alles angeben wurde. 
+\end{itemize}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Vergleiche vornehmen}
+\begin{itemize}
+\item Bedingungen lassen sich auch kombinieren, hierzu stehen zum Beispiel die Schlüsselwörter \textbf{and} und \textbf{or} bereit, die jeweils auch mit dem Wort \textbf{not} negiert werden können. 
+\item Zudem kann das Schlüsselwort \textbf{in} genutzt werden, um die Existenz eines Wertes in einem Objekt zu überprüfen. 
+<<engine='python'>>=
+antwort = [1, 2, 3, 2, 4, 1, 8]
+
+if antwort and not 8 in antwort:
+  print("Die Antworten sind vollständig")
+else:
+  print("Antworten unvollständig.")
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Prüfung auf Gleichheit und Identität von Werten}
+\begin{itemize}
+\item Neben diesen Schlüsselwörtern existieren noch weitere Operatoren, die genutzt werden können, um bestimmte Bedingungen zu überprüfen.
+<<engine='python', eval=F>>=
+x == y # x gleich y
+x != y # x ungleich y
+
+x > y # x größer y
+x < y # x kleiner y
+x < y < z # x kleiner y, y kleiner z
+x <= y # x kleiner oder gleich y
+x >= y # x größer oder gleich y
+
+x & y, x and y # x und y -> bitwise, logical
+
+x | y, x or y # x oder y -> bitwise, logical
+@
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+%~x, not x # nicht x -> bitwise, logical
+
+\begin{frame}[fragile]
+\frametitle{Prüfung auf Gleichheit und Identität von Werten}
+%Ein Sonderfall eines Datenvergleichs betrifft die Prüfung auf Gleichheit (bzw. Ungleichheit) und Selbigkeit. Die Werte können zwar gleich sein, jedoch nicht auf dasselbe verweisen. Mit anderen Worten, eine Variable kann den gleichen Wert haben, ohne der gleiche Wert zu sein. Die Prüfung kann also einerseits auf Gleichheit abzielen und andererseits auf die Selbigkeit bzw. die Identität eines Wertes. 
+\begin{itemize}
+\item Die Abfrage mit doppelten Gleichheitszeichen prüft, ob der eine Wert dem anderen Wert entspricht.
+<<engine='python', eval=F>>=
+x = 4
+y = 4.0
+
+# Prüfung auf Gleichheit / Gleichwertigkeit
+x == y # True
+@
+\item Mit \textbf{is} wird überprüft, ob beide Werte identisch sind (und damit letztlich auf denselben Speicherplatz verweisen). 
+<<engine='python', eval=F>>=
+# Prüfung auf Selbigkeit / Identität
+x is y # False
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Unterschied zwischen Referenz und Kopie}
+<<engine='python', eval=F>>=
+# Referenz -> dieselbe ID
+x = [1, 2, 3]
+y = x
+y.pop()
+
+print(x)
+
+# Kopie -> unterschiedliche ID
+x = [1, 2, 3]
+y = x.copy()
+y.pop()
+
+print(x, y)
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten abfragen mit while- und for-Schleifen}
+\begin{itemize}
+\item Daten selbst können auf unterschiedliche Art und Weise abgefragt werden. 
+\item Grundsätzlich stehen hierbei zwei Optionen zur Verfügung, um mit den Einzelwerten in Datencontainern zu arbeiten.
+\item Während die sogenannten while-Schleifen ausgeführt werden, solange eine bestimmte Bedingung erfüllt ist (bzw. wahr bleibt), wird jedes Element in einem Datencontainer mit einer for-Schleife nacheinander abgearbeitet.
+\item Der Einsatz von while-Schleifen ist also dann sinnvoll, wenn eine Abfrage solange ausgeführt werden soll, bis eine Bedingung den Wahrheitswert False annimmt.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Abfragen mit while-Schleifen}
+\begin{itemize}
+<<engine='python', eval=F>>=
+i = 2
+j = -1
+while i > j:
+  i = i**42
+  print(i)
+@
+
+\item Die Bedingung wird nie falsch und der Ablauf daher \textbf{nie} abgebrochen!
+\item Anders ist es, wenn die Bedingung irgendwann nicht mehr zutrifft.
+<<engine='python', eval=F>>=
+i = 1
+while i < 4:
+  print(i, end=" ")
+  i += 1 # kurz für: i = i + 1
+@
+\item Hier ist die Bedingung (i < 4) nach einigen Durchläufen nicht mehr True, da wir den i-Wert nach jedem Durchlauf erhöhen.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Abfragen mit while-Schleifen}
+\begin{itemize}
+\item allgemeines Funktionsprinzip einer while-Schleife
+<<engine='python', eval=F>>=
+process = True
+while process:
+  # Solange die Bedingung wahr ist,
+  if some_condition:
+  # ... rufe die Funktion auf.
+  do_something_with(stuff)
+else:
+  # Sonst: Schleife stoppen.
+  process = False
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{for-Schleifen schreiben}
+\begin{itemize}
+\item for-Schleifen werden genutzt, wenn wir auf jedes einzelne Element in einem Datencontainer zugreifen bzw. damit operieren wollen.
+\item Grundsätzlich beinhalten Datencontainer(z.B. Listen oder Dictionaries) 0 bis n-Elemente.
+\item Jedes Element in der Liste hat einen spezifischen Index-Wert, der angegeben werden kann, um das Objekt anzusprechen.
+\item Üblicherweise wird also festgestellt, wie viele Elemente eine Liste enthält und solange hochgezählt, bis der Wert überschritten wird.
+<<engine='python'>>=
+names = ["Markus", "Julia", "Klaus"]
+n = len(names) # n = 3
+
+# als Schleife mit Index-Wert
+for i in range(n):
+  name = names[i] # names[0] == "Markus"
+  print(name)
+@
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{For-Schleife durch eine Liste}
+<<engine='python'>>=
+numbers = [2, 4, 6, 8]
+product = 1
+for number in numbers:
+  product = product * number
+print('The product is:', product)
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{List- und Dictionary-Comprehension}
+\begin{itemize}
+\item Die Schreibeweisen der sogenannten „List Comprehension“ und „Dict Comprehension“ bieten in Python die Möglichkeit, mit weniger Programmcode dieselbe Wirkung zu erzielen.
+\item Wenn wir eine Liste mit Elementen erstellen wollen, können wir dies mit einerseits mit einer for-Schleife und der append() Methode umsetzen, andererseits mit einer Comprehension.
+\item Der Vorteil einer Comprehension ist zwar, dass der Code schneller ausgeführt wird, andererseits kann eine solche Abkürzung auch von Nachteil sein, da der Code manchmal weniger gut lesbar ist und es etwa nicht auf die Geschwindigkeit, jedoch auf die Verständlichkeit ankommt. 
+\item Weniger gut lesbar sind diese Abkürzungen etwa dann, wenn man mit verschachtelten Listen arbeitet
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{List Comprehensions I}
+<<engine='python', eval=F>>=
+# Liste mit for-loop erstellen
+numbers_for = []
+for i in range(10):
+  numbers_for.append(i)
+
+# Beispiel einer einfachen List-Comprehension
+numbers_comp = [i for i in range(10)]
+numbers_for == numbers_comp
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{List Comprehensions mit if-Bedingung}
+\begin{itemize}
+\item Bei den Comprehensions muss man im Prinzip schon zu Beginn wissen, was die letzte Instanz ist.
+\item Mit anderen Worten, wir müssen wissen, was wir am Ende der Liste hinzufügen wollen (im Beispiel: die einzelne Nummer). 
+\item List Comprehensions lassen sich im Grunde ganz einfach erstellen, indem man zunächst eine for-Schleife schreibt und diese dann einfach „in Form bringt“.
+\begin{itemize}
+\item Man löscht also zunächst die Absätze, Einrückungen und Doppelpunkte, fügt die eckigen Klammern hinzu und schreibt das, was am Ende der Liste angehangen werden soll, einfach an den Anfang.
+\end{itemize}
+\item List Comprehensions sind auch deshalb hilfreich, weil man Bedingungen an die Wertübergabe knüpfen kann.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{List Comprehensions mit if-Bedingung}
+<<engine='python', eval=F>>=
+# als for-loop
+even = []
+for i in range(10):
+  if i % 2 == 0:
+     even.append(i)
+
+# als list comp
+even = [i for i in range(10) if i % 2 == 0]
+print(even)
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{List Comprehensions II}
+<<engine='python', eval=F>>=
+# Eine Liste mit Listen entschachteln
+list_of_lists = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
+
+# als for-loop
+single_numbers = []
+for num_list in list_of_lists:
+  for num in num_list:
+      single_numbers.append(num)
+
+# als list comp
+single_numbers = [num for num_list in 
+                  list_of_lists for num in num_list]
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Dictionary Comprehensions}
+\begin{itemize}
+\item Auch ein Dictionary lässt sich anhand einer Comprehension erstellen, man spricht dann von einer „Dict-Comprehension“. \\
+\item Die Schreibweise ist dabei ähnlich, nur das eben geschweifte Klammern und Key-Value-Paare vergeben werden.
+\item Auch wenn die Comprehensions anfangs etwas komplizierter scheinen, so lohnt es sich, ihr Konzept zu verinnerlichen. 
+\item Wenn man einmal das Prinzip verstanden hat, dann weiß man die Comprehensions schnell zu schätzen. 
+\item Auch hier gilt, je öfter man es übt, desto leichter fällt es einem beim nächsten Mal.
+<<engine='python'>>=
+numbers = [1, 2, 3]
+labels = ["eins", "zwei", "drei"]
+d = {k:v for (k, v) in zip(numbers, labels)}
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fehlerbehebung: Try und Except}
+<<engine='python', eval=F>>=
+# Code ohne try und except Schlagwörtern
+nummern = [1, 2, "3.14", "Hallo. Wie geht's?", 4.0]
+for num in nummern:
+  if type(num) == str:
+    if "." in num:
+      num = float(num)
+  else:
+    num = int(num)
+    print(num * 3)
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fehlerbehebung: Try und Except}
+<<engine='python', eval=F>>=
+nummern = [1, 2, "3.14", "Hallo. Wie geht's?", 4.0]
+
+# Code mit try und except Schlagwörtern
+for num in nummern:
+  try:
+    if type(num) == str:
+      if "." in num:
+        num = float(num)
+    else:
+      num = int(num)
+      print(num * 3)
+  except ValueError as e:
+    print(e)
+@
+\vspace{10ex}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Funktionen}
+\begin{frame}[fragile]
+\frametitle{Funktionen aufrufen}
+\begin{itemize}
+\item Bisher haben wir schon einige Funktionen von Python kennengelernt, zum Beispiel die Funktionen print(), len() oder range().
+\item Funktionen zeichnen sich dadurch aus, dass man sie einmal formuliert bzw. definiert und sie später aufrufen kann – ohne den gesamten Programmcode erneut schreiben zu müssen. 
+\item Python bietet zahlreiche, bereits eingebaute Funktionen an, die wir nutzen können, ohne den Code dafür schreiben zu müssen
+\item Die range()-Funktion stellt uns zum Beispiel in einfacher Weise eine Zahlenreihe bereit
+\item mit list() können wir Objekte in eine Liste umwandeln usw.
+\end{itemize}
+\vspace{2ex}
+\textbf{Wichtig ist, dass man die Namen der Funktionen nicht für eigene Funktionen oder Objekte nutzen sollte, da auch diese Objekte „überschrieben“ werden können und somit auf ein anderes Objekt verweisen.}
+%Mit anderen Worten, die ursprüngliche Funktion stünde anschließend nicht mehr zur Verfügung.
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Eingebaute Funktionen in Python}
+\adjustbox{max height=\dimexpr\textheight-5.5cm\relax,
+max width=\textwidth}{
+\begin{tabular}{ccccc} \hline
+& & Built-In Functions &  & \\ \hline
+abs() & delattr() & hash() & memoryview() & set() \\
+all & dict() & help() & min() & setattr() \\
+any() & dir() & hex() & next() & slice() \\
+ascii() & divmod() & id() & object() & sorted() \\
+bin & enumerate() & input() & oct() & staticmethod() \\
+bool() & eval() & int() & open() & str() \\
+breakpoint() & exec() & isinstance() & ord() & sum() \\
+bytearray() & filter() & issubclass() & pow() & super() \\
+bytes() & float() & iter() & print() & tuple() \\
+callable() & format() & len() & property() & type() \\
+chr() & frozenset() & list() & range() & vars() \\
+classmethod() & getattr() & locals() & repr() & zip() \\
+compile() & globals() & map() & reversed() & \_\_import\_\_() \\
+complex() & hasattr() & max() & round() & \\ \hline
+\end{tabular}
+}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Eigene Funktionen definieren}
+\begin{itemize}
+\item Es ist denkbar einfach, in Python eigene Funktionen zu schreiben.
+\item Sie werden allgemein mit dem Schlüsselwort def eingeleitet.
+\item Danach folgt der Name der Funktion, Rundklammern mit den Parametern sowie die Funktionsanweisung, die nach einem Doppelpunkt und eingerückt in einer neuen Zeile folgt. 
+\item Ein konkretes Beispiel könnte eine simple Funktion sein, die eine Grußformel mit einem Namen ausgibt:
+<<engine='python', eval=F>>=
+# Funktion definieren
+def hello(name):
+  return (f"Hallo, {name}! Wie geht es dir?")
+
+# Funktion aufrufen
+hello("John")
+@
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Eine Funktion zur Berechnung des Quadrats}
+<<squareme,  engine='python'>>=
+def squared(x):
+  return x**2
+
+for ii in range(6):
+  print(ii, squared(ii))
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Eine Funktion mit Keyword-Parameter festlegen}
+<<engine='python', eval=F>>=
+def hello(name, anrede="dir"):
+  return f"Hallo, {name}! Wie geht es {anrede}?"
+
+print(hello("James", "ihnen"))
+
+print(hello("ihnen", "James"))
+
+print(hello(anrede="ihnen", name="James"))
+@
+\vspace{25ex}
+\end{frame}
+
+%------------------------------------------------
+
+\subsection{Verarbeitung tabellarischer Daten}
+
+\begin{frame}[fragile]
+\frametitle{Daten einlesen und exportieren}
+\begin{itemize}
+\item Wollen wir unsere Forschungsdaten in Python nutzen, müssen wir diese einlesen. Zudem ist es wichtig, zu wissen, wie wir unsere Ergebnisse als Datei speichern können, um sie etwa mit anderen auszutauschen.
+\item Das Einlesen von verhandenen Daten geschieht mit Funktionen, die das Pandas-Paket bereitstellt
+\item Der Export findet hingegen mit Methoden des DataFrame-Objekts statt
+\item Man muss beim Aufruf mindestens den Dateipfad angeben
+\item Zudem können zahlreiche weitere Parameter übergeben werden, die je nach Dateiformat den Einlese- sowie Schreibprozess spezifizieren
+\item csv-formatierte Dateien stellen sich oftmals als durch Tabulator getrennte Dateien heraus, dies könnten wir wiederum dem Parameter sep mitteilen
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten einlesen und exportieren}
+<<engine='python', eval=F>>=
+# Einlesen allgemein
+pd.read_<format>(fpath, **params)
+
+# Einlesen einer Datei mit Tabulator getrennten Werten
+data = pd.read_csv("my_tsv_data.csv", sep="\t")
+@
+<<engine='python', eval=F>>=
+# Export allgemein
+df.to_<format>(fpath, **params)
+
+# Export einer Datei mit Pipe getrennten Werten
+df.to_csv(fpath, sep="|")
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Einen Beispiel-Datensatz generieren}
+<<engine='python', eval=F>>=
+# Libraries importieren
+import numpy as np
+import pandas as pd
+
+# Seed festlegen, zur Reproduktion des Codes
+np.random.seed(42)
+
+# Daten und Index generieren
+data = np.random.random((10, 4))
+names = ["f1", "f2", "f3", "f4"]
+idx = range(4, 14)
+
+# DataFrame erstellen
+df = pd.DataFrame(data, columns=names, index=idx)
+@
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Indexing: Attribute abfragen}
+<<engine='python', eval=F>>=
+# Attribute abfragen (Zeilen, Spalten und Werte)
+df.index
+df.columns
+df.values
+
+# Indexierung einer Spalte
+df["f1"] == df.f1
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Einem DataFrame neue Spalten hinzufügen}
+<<engine='python', eval=F>>=
+# neue Werte hinzufügen
+np.random.seed(42)
+cluster_values = np.random.randint(1, 4, 10)
+df["cluster"] = cluster_values
+
+mapping = {
+    1: "Sport",
+    2: "Wirtschaft",
+    3: "Kultur",
+}
+df["label"] = df.cluster.map(mapping)
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Werte durch Berechnungen hinzufügen und löschen}
+<<engine='python', eval=F>>=
+# neue Werte durch Berechnungen hinzufügen
+df["sum_f1_f2"] = df.f1 + df.f2
+df["mean_f1_f2"] = (df.f1 + df.f2) / 2
+
+# neue Werte durch for-Loop hinzufügen
+for column in df.columns[0:4]:
+    name = f"{column}_mn_diff"
+    df[name] = df[column] - df[column].mean()
+
+# Spalten löschen
+df.drop("sum_f1_f2", axis=1, inplace=True)
+@
+\vspace{25ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Indexing: Gezielt auf Daten zugreifen}
+\begin{itemize}
+\item Prinzipiell können wir auf Einzelwerte zugreifen, auf Zeilen und Spalten sowie auf Ausschnitte („Slices“).
+\item Wollen wir uns exakt einen Wert ausgeben lassen, gibt es dafür zwei Varianten: \textbf{df.at[row, col]} und \textbf{df.iat[row, col]}
+\item In beiden wird zunächst der Zeilenname bzw. Zeilenindex und dann der Spaltenname bzw. Spaltenindex übergeben.
+\item Wesentlich ist hier die Verwendung der eckigen Klammern, da es sich dabei nicht um eine Funktion handelt.
+\item iat als Spaltenangabe nicht den Namen, sondern die Index-Position benötigt – daher auch das „i“, für „Index“. 
+\item Anders als dem iat-Befehl, können wir dem at-Befehl auch Zeichenketten übergeben, etwa wenn der Zeilen-Index nicht aus Zahlen, sondern aus Buchstaben besteht.
+\item Man kann selbstredend nicht nur auf Werte zugreifen, sondern auch Werte verändern bzw. ersetzen.
+\vspace{2ex}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Auf Werte eines DataFrame zugreifen}
+<<engine='python', eval=F>>=
+# Auf Einzelwerte zugreifen: [Zeile, Spalte]
+df.at[4, "f1"] 
+df.iat[4, 0]
+df.at[4, "f1"] == df.iat[0, 0]
+
+# Einzelwerte festlegen
+df.at[4, "f1"] = 1
+@
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Auf Werte eines DataFrame zugreifen}
+\begin{itemize}
+\item Abfrage von kompletten Zeilen funktioniert mit: \textbf{loc} und \textbf{iloc}
+\item Ein DataFrame-Objekt erlaubt zudem das sogenannte „Slicing“, die stückweise Auswahl von Werten. Hierdurch können dann Zeilen- und Spaltenwerte gezielt angesprochen werden, etwa solche, die „mitten“ in der Datentabelle liegen. 
+\item Auch der loc-Befehl benötigt die Namen der Objekte im jeweiligen Index, der iloc-Befehl wiederum deren genaue Position.
+\item Die Indexierung erfolgt, wie bei Listen auch, durch die Verwendung eines Doppelpunkts – und die Angabe von Start-, End- sowie Abstandswerten.
+<<engine='python', eval=F>>=
+# Slicing mit Namen
+df.loc[5:9, ["f1", "f3"]]
+
+# Indexierung mit Position
+df.iloc[1:6, [0, 2]]
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Auf Werte eines DataFrame zugreifen}
+\begin{itemize}
+\item Um Werte auszugeben, die eine bestimmte Bedingung erfüllen, wird das sogenannte „Boolean Indexing“ genutzt.
+\item Die Werte lassen sich also anhand einer Wahrheitsprüfung ausgeben
+<<engine='python', eval=F>>=
+# einfaches boolean Indexing
+df[df > 0.4]
+df[df.label == "Kultur"]
+@
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Auf Werte eines DataFrame zugreifen}
+\begin{itemize}
+\item Um Werte auszugeben, die eine bestimmte Bedingung erfüllen, wird das sogenannte „Boolean Indexing“ genutzt. 
+\item Die Werte lassen sich also anhand einer Wahrheitsprüfung ausgeben
+\item Auch der Abgleich mehrerer Bedingungen ist möglich. 
+\item \textbf{Die Bedingungen werden in dem Fall nicht mit and und or bestimmt, sondern mit den Zeichen \& und |}. 
+\item Jede Bedingung muss mithilfe von Rundklammern gruppiert werden. 
+\item Die Bedingungen werden wie beim Indexing innerhalb der eckigen Klammern platziert.
+<<engine='python', eval=F>>=
+# komplexes boolean Indexing
+df[(df.label == "Kultur") | (df.cluster == 2)]
+df[(df.label == "Kultur") & (df.f3 >= 0.3)]
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Werte eines DataFrame sortieren}
+\begin{itemize}
+\item Bei allen Varianten, die die Index-Position als Eingaben benötigen (iloc, iat), ist die Auswahl der Werte von der Sortierung der Datentabelle abhängt
+\item Dies ist bei der direkten Ansprache durch die Namen, nicht der Fall
+\item Die Werte einer Datentabelle können mit den Funktionen \textbf{sort\_index()} sowie \textbf{sort\_values()} sortiert werden.
+\item Die wertbasierte Sortierung erfolgt dabei durch Eingabe des Spaltennamens, wobei auch mehrere Spalten (als Liste oder Tuple) angegeben werden können \item Außerdem lässt sich die Richtung der Sortierung mithilfe des Parameters \textbf{ascending} bestimmen.
+\end{itemize}
+<<engine='python', eval=F>>=
+df.sort_index(inplace=True)
+df.sort_values("f1", ascending=False, inplace=True)
+df.sort_values(["f2", "f1"], ascending=False, inplace=True)
+@
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Überblick über die Daten beschaffen}
+\begin{itemize}
+\item Um sich mit Pandas einen Überblick über die vorhandenen Daten zu verschaffen, stehen abermals unterschiedliche Methoden und Attribute bereit. 
+\item Unter anderem lässt sich klären, welche Datentypen in der Datentabelle vorhanden sind, etwa wenn es sich um Daten aus einer fremden Quelle handelt.
+\item Mit der head()-Methode lässt sich der Anfang der Datentabelle ausgeben, standardmäßig werden die ersten fünf Zeilen angezeigt – auch dies lässt sich durch Eingabe eines Zahlenwertes ändern. 
+\item Die Methode tail() stellt das Gegenstück dar und gibt ebenfalls die n-letzten Zeilen aus (auch hier ist der Standard-Wert „5“).
+<<engine='python', eval=F>>=
+df.dtypes
+df.head(2)
+df.tail(7)
+@
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Daten mit eigenen Funktionen bearbeiten}
+Bisher haben wir Methoden kennengelernt, mit denen wir uns Ergebnisse generieren bzw. uns Statistiken ausgeben lassen können. Daten lassen sich mit deren Hilfe jedoch auch bearbeiten und transformieren, etwa mit der Methode apply(). 
+<<engine='python', eval=F>>=
+def multi_x(x, *args):
+  for arg in args:
+    x *= arg
+    return int(x)
+
+# xi mit den args-Werten multiplizieren [i: 0 ... n]
+df.f1.apply(multi_x, args=(3, 2, 4))
+
+# 0, wenn xi kleiner oder gleich 0.5, sonst 1 [i: 0 ... n]
+df.f2.apply(lambda x: 0 if x <= 0.5 else 1)
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Übung}
+\begin{frame}
+\frametitle{Do it yourself}
+\begin{itemize}
+\item Liest den Datensatz \textbf{size.csv} in Python ein
+\item Verschafft euch einen Überblick über die Daten (dtypes, head, tail, shape)
+\item Sortiert die Daten nach Größe
+\item Extrahiert alle Einträge mit einer Größe über 180 cm
+\item Nun extrahiert alle Einträge für weibliche Personen mit einer Größe von 180 cm und mehr
+\item und für alle männlichen Personen mit einer Größe unter 190 cm und einer Schuhgröße von 43
+\item Extrahiert alle Einträge für weibliche Personen mit einer Größe von 190 cm oder einer Schuhgröße von 40
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Vielen Dank für eure Aufmerksamkeit!}
+%------------------------------------------------
+
+\end{document}

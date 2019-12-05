@@ -1,0 +1,1685 @@
+\documentclass{beamer}
+\mode<presentation>{
+\usetheme{AnnArbor}
+\usecolortheme{beaver}
+\setbeamercolor{title}{bg=gray!10!white}
+\setbeamertemplate{itemize item}{\color{darkred}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{darkred}$\blacktriangleright$}
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{enumerate items}[default]
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{enumerate item}{fg=darkred}
+\setbeamercolor{enumerate subitem}{fg=darkred}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{setspace}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{multirow}
+}
+
+\AtBeginSection[]{
+\begin{frame}
+\vfill
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+\usebeamerfont{title}\insertsectionhead\par%
+\end{beamercolorbox}
+\vfill
+\end{frame}
+}
+
+\title[Statistik Kurs]{Einführung in die Statistik mit Python}
+\author[RS-eco]{RS-eco} % Your name
+\institute[TUM]{Biodiversity \& Global Change Lab\\Technische Universität München \\ \vspace{1ex}
+\href{mailto:rs-eco@posteo.de}{rs-eco@posteo.de} \\ \vspace{1ex} 15. November 2019} 
+\date{}
+\titlegraphic{\vspace{-5ex} \includegraphics[width=\textwidth]{figures/mountain_hist}}
+
+\begin{document}
+\begin{frame}
+\titlepage
+\end{frame}
+
+%------------------------------------------------
+\section{Unstatistik des Monats}
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Klimapaket macht Flugtickets wesentlich teurer}
+Steuer um 76 Prozent rauf - GroKo macht Flugtickets noch mal teurer! \\
+\vspace{2ex}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.9\textwidth]{figures/plane}}
+\end{figure}
+\hfill \tiny{\href{http://www.rwi-essen.de/unstatistik/96/}{http://www.rwi-essen.de/unstatistik/96/}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Klimapaket macht Flugtickets wesentlich teurer}
+\begin{itemize}
+\item Erhöhung der Steuer auf Inlandsflüge von derzeit 7,50 auf 13,03 € (+76\%), bei Auslandsflügen von 42,18 auf 59,43 € (+41\%)
+\item Dabei fällt unter den Tisch, dass sich die absoluten Erhöhungen auf gerade einmal 5,53 € beziehungsweise 17,25 € belaufen – und sich am Ende in Form weitaus geringerer relativer Erhöhungen auf die Ticketpreise auswirken werden.
+\item Die billigsten Tickets für eine kurzfristigen Hin- und Rückflug von München nach Berlin kostet rund 135 €, für einen langfristig geplanten Flug rund 65 €. Diese Flüge würden sich um rund 4,1 \% bis rund 8,5 \% verteuern.
+\item Auch wenn die Berechnung der prozentualen Steuererhöhungen mathematisch nicht zu kritisieren ist, so ist es doch die implizite, dramatisierende Botschaft an den Leser, die aus einer Mücke einen Elefanten macht
+\end{itemize}
+\vspace{3ex}
+\hfill \tiny{\href{http://www.rwi-essen.de/unstatistik/96/}{http://www.rwi-essen.de/unstatistik/96/}}
+\vspace{1ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Datenverarbeitung mit Python}
+%------------------------------------------------
+
+\subsection{Apply Funktion}
+\begin{frame}[fragile]
+\frametitle{Apply Funktion}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+# Import library
+import seaborn as sns
+
+# Read dataset
+titanic = sns.load_dataset("titanic")
+
+# Create a new function:
+def num_missing(x): return sum(x.isnull())
+
+# Applying per column (axis=0)
+print(titanic.apply(num_missing, axis=0))
+
+# Applying per row (axis=1)
+print(titanic.apply(num_missing, axis=1).head())
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Imputation von fehlenden Werten}
+\begin{frame}[fragile]
+\frametitle{Imputation von fehlenden Werten}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+# Import function to determine the mode
+from scipy.stats import mode
+
+mode(titanic['deck']) # This returns both mode and count. 
+# Mode can return multiple values with high frequency. 
+
+# Take the first mode value
+mode(titanic['deck']).mode[0]
+
+# Impute the values:
+titanic['deck'].fillna(mode(titanic['deck']).mode[0], 
+                       inplace=True)
+
+# Now check the missing values again to confirm:
+print(titanic.apply(num_missing, axis=0))
+@
+\vspace{2ex}
+\end{frame}
+
+\subsection{Crosstab}
+\begin{frame}[fragile]
+\frametitle{Crosstab}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+# Import library
+import pandas as pd
+
+# Create crosstab
+pd.crosstab(titanic["survived"],titanic["sex"], margins=True)
+
+# Define Function for percentage conversion
+def percConvert(ser): return ser/float(ser[-1])
+
+# Apply function to crosstab output
+pd.crosstab(titanic["survived"],titanic["sex"], 
+            margins=True).apply(percConvert, axis=1)
+@
+\vspace{20ex}
+\end{frame}
+
+\subsection{Merging}
+\begin{frame}[fragile]
+\frametitle{Zusammenführen von zwei DataFrames}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+# First we create some dummy data
+band = pd.DataFrame({"name":["Mick","John","Paul"], 
+                  "band":["Stones","Beatles","Beatles"]})
+print(band)
+
+instruments = pd.DataFrame({"name":["John","Paul","Keith"], 
+                         "instrument":["guitar","bass",
+                                       "guitar"]})
+print(instruments)
+
+# "Mutating" joins combine variables
+pd.merge(band, instruments, on="name", how="inner")
+pd.merge(band, instruments, how="left")
+pd.merge(band, instruments, how="right")
+pd.merge(band, instruments, how="outer")
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Pivot-Tabelle}
+\begin{frame}[fragile]
+\frametitle{Pivot-Tabelle mit Pandas erstellen}
+\vspace{-2ex}
+<<engine='python, eval=F'>>=
+# Import library
+import seaborn as sns
+
+# Datensatz laden
+titanic = sns.load_dataset("titanic")
+
+# Pivot-Tabelle generieren
+titanic.pivot_table(columns="class", index="sex", 
+                    values="survived", aggfunc="mean")
+
+# Oder so
+params = {"columns": "class", "index": "sex",
+          "values": "survived", "aggfunc": "mean"}
+titanic_pivot = titanic.pivot_table(**params)
+
+print(titanic_pivot) # Show pivot-table
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Unpivot}
+\begin{frame}[fragile]
+\frametitle{Unpivot - melt()}
+\begin{itemize}
+\item melt() ist die Umkehrung von pivot()/pivot\_table() und macht den DataFrame wieder länger \\
+\end{itemize}
+\scriptsize{
+<<engine='python', eval=F>>=
+import pandas as pd
+
+df = pd.DataFrame({'foo': ['one', 'one', 'one', 'two', 'two', 'two'],
+                   'bar': ['A', 'B', 'C', 'A', 'B', 'C'],
+                   'baz': [1, 2, 3, 4, 5, 6]})
+print(df)
+
+df_pivot = df.pivot(index='foo', columns='bar', values='baz')
+print(df_pivot)
+
+# Show column names
+df_pivot.columns.values
+
+# Move row Index to column
+df_pivot.reset_index(inplace=True)
+
+# Unpivot DataFrame
+df_pivot.melt(id_vars=['foo'], value_vars=['A', 'B', 'C'],
+              var_name='bar', value_name='baz')
+@
+}
+\vspace{5ex}
+\end{frame}
+
+\subsection{stack/unstack}
+\begin{frame}[fragile]
+\frametitle{stack() und unstack()}
+\begin{itemize}
+\item stack() macht den DataFrame länger
+\item unstack() ist die Umkehrung von stack() und macht den DataFrame wieder breiter 
+\end{itemize}
+\vspace{1ex}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.8\textwidth]{figures/stack-unstack}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\section{Cheatsheets}
+
+\begin{frame}[fragile]
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.975\textwidth]{cheatsheets/PandasPythonForDataScience}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://assets.datacamp.com/blog_assets/PandasPythonForDataScience.pdf}{https://assets.datacamp.com/blog\_assets/PandasPythonForDataScience.pdf}}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.975\textwidth]{cheatsheets/Python_Matplotlib_Cheat_Sheet}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://assets.datacamp.com/blog_assets/Python_Matplotlib_Cheat_Sheet.pdf}{https://assets.datacamp.com/blog\_assets/Python\_Matplotlib\_Cheat\_Sheet.pdf}}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.975\textwidth]{cheatsheets/Python_Seaborn_Cheat_Sheet}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://assets.datacamp.com/blog_assets/Python_Seaborn_Cheat_Sheet.pdf}{https://assets.datacamp.com/blog\_assets/Python\_Seaborn\_Cheat\_Sheet.pdf}}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.975\textwidth]{cheatsheets/Scikit_Learn_Cheat_Sheet_Python}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://assets.datacamp.com/blog_assets/Scikit_Learn_Cheat_Sheet_Python.pdf}{https://assets.datacamp.com/blog\_assets/Scikit\_Learn\_Cheat\_Sheet\_Python.pdf}}
+\end{frame}
+
+\section{Nützliche Ressourcen}
+\begin{frame}[fragile]
+\frametitle{Nützliche Ressourcen}
+\begin{itemize}
+\item Statistik allgemein
+\vspace{1ex}
+\begin{itemize}
+\item \href{http://www.statsoft.com/Textbook/Elementary-Statistics-Concepts}{http://www.statsoft.com/Textbook/Elementary-Statistics-Concepts}
+\vspace{0.5ex}
+\item \href{http://www.reiter1.com/Glossar/Glossar.htm}{http://www.reiter1.com/Glossar/Glossar.htm}}
+\end{itemize}
+\vspace{1ex}
+\item Python allgemein
+\vspace{1ex}
+\begin{itemize}
+\item T.R. Padmanabhan - Programming with Python (Springer Verlag)
+\vspace{0.5ex}
+\item Heiko Kalista - Python3 (Hanser Verlag)
+\end{itemize}
+\vspace{1ex}
+\item Statistik mit Python
+\vspace{1ex}
+\begin{itemize}
+\item \href{http://gael-varoquaux.info/stats_in_python_tutorial/}{http://gael-varoquaux.info/stats\_in\_python\_tutorial/}
+\vspace{0.5ex}
+\item Thomas Haslwanter - An Introduction to Statistics with Python (Springer Verlag)
+\vspace{0.5ex}
+\item Markus Feiks - Empirische Sozialforschung mit Python (Springer Verlag)
+\vspace{0.5ex}
+\item Scipy Lecture Notes (\href{http://scipy-lectures.org/}{http://scipy-lectures.org/})
+\end{itemize}
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Nachtrag}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Namensräume verbinden - join() \& path.join()}
+\vspace{-1ex}
+\footnotesize{
+<<engine='python', eval=F>>=
+list1 = ['1','2','3','4']; s = "-"
+  
+# joins elements of list1 by '-' and stores in string s 
+s.join(list1) 
+
+# Create filename from basename and format
+base_filename='my_figure'
+format = 'pdf'
+filename = ".".join([base_filename, format])
+
+# Specify full path of file directory, please change accordingly
+dir_name='/home/matt/Documents/Github/pyStats/'
+
+# Create filename with full path
+"".join([dir_name, filename]) 
+
+# Alternative approach using the os package
+import os
+os.path.join(dir_name, base_filename + "." + format)
+@
+}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Speichern von bestimmten Abbildungen}
+\vspace{-1ex}
+\scriptsize{
+<<engine='python', eval=F>>=#
+import matplotlib.pyplot as plt
+
+f1 = plt.figure()
+plt.plot(range(10), range(10), "o")
+plt.show()
+
+# Import library and dataset
+iris = sns.load_dataset('iris')
+
+# Hist only
+f2 = plt.figure()
+sns.distplot(a=iris["sepal_length"], hist=True, kde=False, rug=False )
+plt.show()
+
+# Save with combined dir_name and filename
+file = "".join([dir_name, filename])
+file # Make sure the path is correct, before saving!!!
+
+f1.savefig(file, bbox_inches='tight')
+
+# Save to working directory
+f2.savefig("hist_sepal_length.pdf", bbox_inches='tight')
+@
+}
+\vspace{5ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Übung}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Übung}
+\begin{itemize}
+\item Ihr findet sämtliche Kursunterlagen unter: \href{http://github.com/RS-eco/pyStats}{http://github.com/RS-eco/pyStats}
+\vspace{2ex}
+\item Öffnet das Jupyter Notebook für Tag 3 und:
+\vspace{1ex}
+\begin{itemize}
+\item Ladet den Datensatz \textbf{schoko.csv} in Python
+\item Verschafft euch einen Überblick über den Datensatz
+\item Findet sämtliche Bio-Schokolade mit einem Preis nicht teurer als 1,6 €
+\item Sortiert den Datensatz nach Bio und Preis
+\item Erstellt eine Pivot-Tabelle mit Marke, Kategorie und Durchschnitts-Preis (pivot\_table())
+\item Erstellt eine Heatmap von der Pivot-Tabelle (sns.heatmap())
+\item Erstellt eine Grafik (sns.catplot()) mit Bio, Preis \& Kategorie 
+\item Und nun nochmal mit sns.violinplot()
+\item Erstellt nun noch einen Scatterplot (sns.scatterplot()) mit Kakaogehalt, Preis, Kategorie \& Anzahl der Inhaltsstoffe
+\end{itemize}
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Verteilungs- \& Dichtefunktionen}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Wahrscheinlichkeitsverteilungen}
+\begin{itemize}
+\item Die mathematischen Werkzeuge zur Beschreibung der Verteilung numerischer Daten in Populationen und Stichproben.
+
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.85\textwidth]{figures/populations_samples}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+%Populationen und Stichproben
+%Population = Includes all of the elements from a set of data.
+%Sample = Consists of one or more observations from the population.
+%Parameter = Characteristic of a population, such as a mean or standard deviation. Often notated using Greek letters.
+%Statistic = A measurable characteristic of a sample.
+
+\begin{frame}[fragile]
+\frametitle{Wahrscheinlichkeitsverteilungen}
+\begin{itemize}
+\item Die mathematischen Werkzeuge zur Beschreibung der Verteilung numerischer Daten in Populationen und Stichproben.
+\vspace{1ex}
+\item \textbf{Diskrete Verteilungen}
+\vspace{1ex}
+\begin{itemize}
+\item Für eine gegebene diskrete Verteilung wird der Satz aller Wahrscheinlichkeiten als Wahrscheinlichkeitsmassenfunktion (Probability Mass Function = PMF) dieser Verteilung bezeichnet.
+\end{itemize}
+\vspace{1ex}
+\item \textbf{Kontinuierliche Verteilungen}
+\vspace{1ex}
+\begin{itemize}
+\item Für eine gegebene kontinuierliche Verteilung ist die Kurve, die die Wahrscheinlichkeit für jeden Wert beschreibt, d.h. die Wahrscheinlichkeitsverteilung, eine kontinuierliche Funktion, die Wahrscheinlichkeitsdichtefunktion (Probability Density Function = PDF).
+\end{itemize}
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungs- \& Dichtefunktion}
+\begin{itemize}
+\item \textbf{Verteilungsfunktion} = kumulierte relative Häufigkeit von Ereignissen, S-förmig
+\vspace{1ex}
+\item \textbf{Dichtefunktion} = Ableitung der Verteilungsfunktion, glockenförmig
+\vspace{1ex}
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.7\textwidth]{figures/pdf-cdf}}
+\end{figure}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungs- \& Dichtefunktion}
+\begin{itemize}
+\item \textbf{Verteilungsfunktion} = kumulierte relative Häufigkeit von Ereignissen, S-förmig
+\vspace{1.35ex}
+\item \textbf{Dichtefunktion} = Ableitung der Verteilungsfunktion, glockenförmig
+\begin{itemize}
+\vspace{1ex}
+\item Dichtefunktion wird oft fälschlicherweise "Verteilungsfunktion" genannt
+\vspace{1ex}
+\item Dichtefunktionen sind etwas Abstraktes, aus dem sich nichts ohne weiteres ablesen lässt.
+\end{itemize}
+\item Aus den S-förmigen Verteilungsfunktionen dagegen kann man Häufigkeiten direkt ablesen, oder wenigstens durch einfache Differenzbildung berechnen.
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Darstellungen von Wahrscheinlichkeitsdichten}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.9\textwidth]{figures/probability_density_presentation}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+%https://www.datacamp.com/community/tutorials/probability-distributions-python
+
+\subsection{diskrete Verteilungsfunktionen}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für endliche Mengen}
+\begin{itemize}
+\item \textbf{Bernoulli-Verteilung} = Beschreibung von zufälligen Ereignissen, bei denen es nur zwei mögliche Versuchsausgänge und eine vorgegebene Obergrenze gibt
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.8\textwidth]{figures/Bernoulli_Distribution}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für endliche Mengen}
+\begin{itemize}
+\item \textbf{Bernoulli-Verteilung} = Beschreibung von zufälligen Ereignissen, bei denen es nur zwei mögliche Versuchsausgänge und eine vorgegebene Obergrenze gibt
+\end{itemize}
+<<engine='python', eval=F>>=#
+from scipy import stats
+
+p = 0.5
+bernoulliDist = stats.bernoulli(p)
+
+# Probability mass function
+p_tails = bernoulliDist.pmf(0)
+p_heads = bernoulliDist.pmf(1)
+
+# And we can simulate 10 Bernoulli trials with
+trials = bernoulliDist.rvs(10) # rvs = random variates
+trials
+@
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für endliche Mengen}
+\begin{itemize}
+\item \textbf{Binominalverteilung} = beschreibt die Anzahl der Erfolge in einer Serie von gleichartigen und unabhängigen Versuchen, die jeweils genau zwei mögliche Ergebnisse haben („Erfolg“ oder „Misserfolg“).
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.77\textwidth]{figures/Binomial_distribution}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für endliche Mengen}
+\begin{itemize}
+\item \textbf{Binominalverteilung} = beschreibt die Anzahl der Erfolge in einer Serie von gleichartigen und unabhängigen Versuchen, die jeweils genau zwei mögliche Ergebnisse haben („Erfolg“ oder „Misserfolg“).
+\end{itemize}
+<<engine='python', eval=F>>=
+from scipy import stats
+import numpy as np
+
+# Frozen distribution function
+(p, num) = (0.5, 4)
+binomDist = stats.binom(num, p)
+
+# calculate the probabilities how often heads come up 
+# during four tosses, given by the PMF
+binomDist.pmf(np.arange(5))
+@
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für unendliche Mengen}
+\begin{itemize}
+\item \textbf{Poisson-Verteilung} = eine Wahrscheinlichkeitsverteilung, mit der die Anzahl von Ereignissen modelliert werden kann, die bei konstanter mittlerer Rate unabhängig voneinander in einem festen Zeitintervall oder räumlichen Gebiet eintreten.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.71\textwidth]{figures/Poisson-Verteilung}}
+\end{figure}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Diskrete Verteilungen für unendliche Mengen}
+\begin{itemize}
+\item \textbf{Poisson-Verteilung} = eine Wahrscheinlichkeitsverteilung, mit der die Anzahl von Ereignissen modelliert werden kann, die bei konstanter mittlerer Rate unabhängig voneinander in einem festen Zeitintervall oder räumlichen Gebiet eintreten.
+\end{itemize}
+\vspace{-.75ex}
+\small{
+<<engine='python', eval=F>>=
+# Generate the distribution.
+# Watch out NOT to divide integers, 
+# as "3/4" gives "0" in Python 2.x!
+prob = 62./(365./7)
+pd = stats.poisson(prob)
+
+# Select the interesting numbers, 
+# calculate the PMF, and print the results
+x = [0,2,5]
+y = pd.pmf(x)*100
+for num, solution in zip(x,y):
+  print('''The chance of having {0} fatal accidents in one 
+        week is {1:4.1f}%.'''.format(num,solution))
+@
+}
+\vspace{1ex}
+\end{frame}
+
+\subsection{Normalverteilung}
+
+\begin{frame}[fragile]
+\frametitle{Kontinuerliche Verteilungen mit unbeschränktem Intervall}
+\begin{itemize}
+\item \textbf{Normal- oder Gaußverteilung}
+\begin{itemize}
+\item wichtigste Verteilungsfunktion in der Statistik 
+\item besitzt 2 Parameter (Mittelwert und Standardabweichung)
+\item Die Summe oder Differenz von mehreren Normalverteilung ergibt wieder eine Normalverteilung
+\end{itemize}
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.6\textwidth]{figures/Normalverteilung}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontinuerliche Verteilungen mit unbeschränktem Intervall}
+\begin{itemize}
+\item \textbf{Normal- oder Gaußverteilung}
+\end{itemize}
+\vspace{1ex}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.9\textwidth]{figures/sd_normal-dist}}
+\end{figure}
+Fläche unter $\pm$ 1, 2, und 3 Standardabweichungen einer Normalverteilung
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontinuerliche Verteilungen mit unbeschränktem Intervall}
+\begin{itemize}
+\item \textbf{Normal- oder Gaußverteilung}
+\end{itemize}
+\vspace{1ex}
+Beispiel zur Berechnung des Intervals der PDF  für Mittelwert = -2 und SD = 0.7 welche 95\% der Daten beinhaltet.
+\vspace{1ex}
+<<engine='python', eval=F>>=
+import numpy as np
+from scipy import stats
+
+mu = -2
+sigma = 0.7
+myDistribution = stats.norm(mu, sigma)
+significanceLevel = 0.05
+
+myDistribution.ppf(
+  [significanceLevel/2, 1-significanceLevel/2])
+@
+\vspace{10ex}
+\end{frame}
+
+\subsection{Verteilungen abgeleitet von der Normalverteilung}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{t-Verteilung} wird mit wachsendem n schmaler und geht für n → $\infty$ in die Normalverteilung über
+\vspace{1ex}
+\begin{itemize}
+\item Wird bei niedrigen Stichprobengrößen verwendet, wenn der wahre Mittelwert und die wahre Standardabweichung unbekannt sind.
+\end{itemize}
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.8\textwidth]{figures/T-distribution}}
+\end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{t-Verteilung}
+\end{itemize}
+\vspace{-0.75ex}
+<<engine='python', eval=F>>=
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import stats
+
+x = [52, 70, 65, 85, 62, 83, 59] # Enter the data
+
+# Generate the t-distribution: DOF = length data minus 1.
+td = stats.t(len(x)-1); alpha = 0.01
+
+# From the t-distribution, you use the "PPF" function and 
+# multiply it with the standard error
+tval = abs( td.ppf(alpha/2)*stats.sem(x) )
+print('mean +/- 99%CI = {0:3.1f} +/- {1:3.1f}'.
+      format(np.mean(x),tval))
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{Chi-Quadratverteilung} = eine stetige Wahrscheinlichkeitsverteilung über der Menge der nichtnegativen reellen Zahlen. Sie hat einen einzigen Parameter, nämlich die Anzahl der Freiheitsgrade n. 
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.75\textwidth]{figures/Chi-square_pdf}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{Chi-Quadratverteilung} mit 3 DOF
+\end{itemize}
+<<engine='python', eval=F>>=
+# Define the normal distribution
+nd = stats.norm()
+
+# Generate three sets of random variates 
+# from this distribution
+numData = 1000
+data1 = nd.rvs(numData)
+data2 = nd.rvs(numData)
+data3 = nd.rvs(numData)
+
+# Show a histogram of the sum of the squares of 
+# these random data
+plt.hist(data1**2+data2**2 +data3**2, 100)
+plt.show()
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{F-Verteilung} = Quotient zweier jeweils durch die zugehörige Anzahl der Freiheitsgrade geteilter Chi-Quadrat-verteilter Zufallsvariablen. Die F-Verteilung besitzt zwei unabhängige Freiheitsgrade als Parameter. 
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.8\textwidth]{figures/Dichte_F-Verteilung}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Verteilungen abgeleitet von der Normalverteilung}
+\begin{itemize}
+\item \textbf{F-Verteilung}
+\end{itemize}
+<<engine='python', eval=F>>=
+apples1 = [110, 121, 143]
+apples2 = [88, 93, 105, 124]
+
+fval = np.std(apples1, ddof=1)/np.std(apples2, ddof=1)
+fd = stats.distributions.f(len(apples1),len(apples2))
+pval = fd.cdf(fval)
+
+print('The p-value of the F-distribution = {0}.'.format(pval))
+if pval>0.025 and pval<0.975:
+  print('The variances are equal.')
+@
+\vspace{20ex}
+\end{frame}
+
+\subsection{weitere kontinuierliche Verteilungsfunktionen}
+
+\begin{frame}[fragile]
+\frametitle{weitere kontinuierliche Verteilungsfunktionen}
+\begin{itemize}
+\item \textbf{Log-Normalverteilung} = kontinuierliche Wahrscheinlichkeitsverteilung für eine Variable, die nur positive Werte annehmen kann. Sie beschreibt die Verteilung einer Zufallsvariablen die mit dem Logarithmus transformiert normalverteilt ist.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.6\textwidth]{figures/Lognormal_distribution_PDF}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{weitere kontinuierliche Verteilungsfunktionen}
+\begin{itemize}
+\item \textbf{Weibull-Verteilung} = zweiparametrige stetige Wahrscheinlichkeitsverteilung über der Menge der positiven reellen Zahlen. Sie wird unter anderem zur statistischen Modellierung von Windgeschwindigkeiten oder zur Beschreibung der Lebensdauer und Ausfallhäufigkeit von elektronischen Bauelementen herangezogen.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.675\textwidth]{figures/Weibull_PDF}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{weitere kontinuierliche Verteilungsfunktionen}
+\begin{itemize}
+\item \textbf{Exponentialverteilung} = stetige Wahrscheinlichkeitsverteilung über der Menge der nicht-negativen reellen Zahlen, die durch eine Exponentialfunktion gegeben ist, z.B. Dauer von zufälligen Zeitintervallen
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.75\textwidth]{figures/ExpDichteF}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{weitere kontinuierliche Verteilungsfunktionen}
+\begin{itemize}
+\item \textbf{Stetige Gleichverteilung} = alle Teilintervalle gleicher Länge besitzen dieselbe Wahrscheinlichkeit
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.85\textwidth]{figures/stetige_Gleichverteilung}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\section{Normalitätsprüfung}
+
+\subsection{Wahrscheinlichkeitsdiagramme}
+\begin{frame}[fragile]
+\frametitle{Wahrscheinlichkeitsdiagramme}
+\begin{itemize}
+\item  \textbf{QQ-Plots} - Die Quantile eines bestimmten Datensatzes werden gegen die Quantile einer Referenzverteilung, typischerweise der Standardnormalverteilung, aufgetragen.
+\item \textbf{PP-Plots} - Die CDF (cumulative-distribution-function) eines gegebenen Datensatzes wird gegen die CDF einer Referenzverteilung aufgetragen.
+\item \textbf{Probability Plots} - Die geordneten Werte eines gegebenen Datensatzes werden gegen die Quantile einer Referenzverteilung aufgetragen.
+\vspace{2ex}
+
+\item In allen drei Fällen sind die Ergebnisse ähnlich: 
+\begin{itemize}
+\item Wenn die beiden zu vergleichenden Verteilungen ähnlich sind, liegen die Punkte etwa auf der Linie y = x. 
+\item Wenn die Verteilungen linear verbunden sind, liegen die Punkte etwa auf einer Linie, aber nicht unbedingt auf der Linie y = x.
+\end{itemize}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Wahrscheinlichkeitsdiagramme}
+\begin{itemize}
+\item In Python kann mit dem Befehl \textbf{probplot()} ein Wahrscheinlichkeitsdiagramm erstellt werden:
+<<engine='python', eval=F>>=
+from scipy import stats
+import matplotlib.pyplot as plt
+nsample = 100
+np.random.seed(7654321)
+
+# A t distribution with small degrees of freedom:
+x = stats.t.rvs(3, size=nsample)
+res = stats.probplot(x, plot=plt)
+plt.show()
+@
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Wahrscheinlichkeitsdiagramme}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=0.8\textwidth]{figures/probability-plot}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Normalitätstests}
+
+\begin{frame}
+\frametitle{Normalitätstests}
+\begin{itemize}
+\item Bei Normalitätstests können unterschiedliche Herausforderungen auftreten: 
+\vspace{1ex}
+\begin{itemize}
+\item Manchmal sind nur wenige Stichproben verfügbar
+\item Manchmal liegen viele Daten, aber einige extrem abweichende Werte vor
+\end{itemize}
+\vspace{1ex}
+\item Tests zur Beurteilung der Normalität (oder der Ähnlichkeit mit einer bestimmten Verteilung) lassen sich grob in zwei Kategorien einteilen:
+\vspace{1ex}
+\begin{itemize}
+\item Tests, die auf einem Vergleich ("best fit") mit einer bestimmten Verteilung basieren, die oft in Bezug auf ihre CDF spezifiziert ist: \textbf{Kolmogorov-Smirnov-Test}, Lilliefors-Test, Anderson-Darling-Test, Cramer-von-Mises-Kriterium, \textbf{Shapiro-Wilk Test} und Shapiro-Francia Test.
+\vspace{1ex}
+\item Tests, die auf einer deskriptiven Statistik der Stichprobe basieren: Schräglauftest, der Kurtosetest, der \textbf{D'Agostino-Pearson Omnibus-Test} oder der Jarque-Bera-Test.
+\end{itemize}
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Normalitäts-Tests}
+\begin{itemize}
+\item Der Python-Befehl:
+<<engine='python', eval=F>>=
+stats.normaltest(x)
+@
+verwendet den D'Agostino-Pearson Omnibus-Test. Dieser Test kombiniert einen Schiefe- und Kurtosis-Test zu einer einzigen, globalen "Omnibus"-Statistik.
+\vspace{1ex}
+\item Mehr gebräuchlich ist bei kleinen Stichproben (weniger als 50 Datenpunkte) der \textbf{Shapiro-Wilk-Test}:
+<<engine='python', eval=F>>=
+stats.shapiro(x)
+@
+\vspace{1ex}
+\item Und wenn die Probe mehr als 50 Datenpunkte hat, der \textbf{Kolmogorov-Smirnov-Test}:
+<<engine='python', eval=F>>=
+stats.kstest(x)
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Daten-Transformation}
+
+\begin{frame}[fragile]
+\frametitle{Daten-Transformation}
+\begin{itemize}
+\item Wenn die Daten signifikant von einer Normalverteilung abweichen, ist es manchmal ratsam, die Daten zu transformieren um sie einer Normalverteilung anzunähern.
+\item Oft haben Daten Werte, die nur positiv sein können (z.B. die Größe von Personen): Solche Daten können oft durch eine \textbf{Log-Transformation} normalisiert werden:
+<<engine='python', eval=F>>=
+# example dataframe
+df = pd.DataFrame({'a': [0, 1, 2, 3], 
+                   'b': [4, 5, np.nan, 7], 
+                   'c': [8, 9, 10, 11]})
+
+# apply log(x+1) element-wise to a subset of columns
+df_log = df[['a', 'b']].applymap(lambda x: np.log(x+1))
+@
+\item \textbf{Weitere Transformationen:} Wurzel-Transformation, Power-Transformation, Box-Cox Transformation, Logit Transformation
+\end{itemize}
+\vspace{30ex}
+\end{frame}
+
+\section{Fehlerwerte, p-Wert und Stichprobenumfang}
+
+\subsection{Die Interpretation des p-Wertes}
+
+\begin{frame}
+\frametitle{Die Interpretation des p-Wertes}
+\begin{itemize}
+\item Ein Wert von $p < 0,05$ für die Nullhypothese ist wie folgt zu interpretieren: Wenn die Nullhypothese wahr ist, ist die Chance, eine Teststatistik zu finden, die so extrem wie oder extremer als die beobachtete Statistik ist, weniger als 5 \%. Das ist nicht dasselbe wie zu sagen, dass die Nullhypothese falsch ist, und noch weniger, dass eine alternative Hypothese wahr ist!
+\item Die Angabe eines p-Wertes allein ist für die statistische Analyse von Daten heutzutage nicht mehr ausreichend. Darüber hinaus sollten auch die Konfidenzintervalle für die zu untersuchenden Parameter angegeben werden.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Statistische Signifikanz}
+
+\begin{frame}[fragile]
+\frametitle{Statistische Signifikanz}
+\begin{itemize}
+\item Statistiker wollen auf das Standardmaß der Wissenschaft verzichten
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+\includegraphics[width=\textwidth]{figures/p-values}}
+\end{figure}
+\vspace{-2ex}
+\hfill \tiny{\href{https://www.sciencenews.org/article/statisticians-standard-measure-significance-p-values?tgt=nr}{https://www.sciencenews.org/article/statisticians-standard-measure-significance-p-values?tgt=nr}}
+\end{frame}
+
+\subsection{Fehlerarten}
+
+\begin{frame}[fragile]
+\frametitle{Fehlerarten}
+\begin{itemize}
+\item Beim Hypothesentest können zwei Arten von Fehlern auftreten.
+\vspace{1ex}
+\item \textbf{Typ-I-Fehler} = Fehler, bei denen das Ergebnis signifikant ist, obwohl die Null Hypothese wahr ist.
+\vspace{1ex}
+\begin{itemize}
+\item Die Wahrscheinlichkeit eines Typ-I-Fehlers wird üblicherweise mit $\alpha$ angegeben und vor Beginn der Datenanalyse festgelegt.
+\item Ein Typ-I-Fehler wäre die Diagnose von Krebs ("positives" Testergebnis), obwohl die Testperson gesund ist.
+\end{itemize}
+\vspace{1ex}
+\item \textbf{Typ-II-Fehler} = Fehler, bei denen das Ergebnis nicht signifikant ist, trotz der Tatsache, dass die Null-Hypothese falsch ist.
+\vspace{1ex}
+\begin{itemize}
+\item Ein Typ-II-Fehler wäre eine "gesunde" Diagnose ("negatives" Testergebnis), auch wenn der Betroffene Krebs hat.
+\item Die Wahrscheinlichkeit für diese Art von Fehler wird üblicherweise mit $\beta$ angegeben. 
+\item Die "Stärke" eines statistischen Tests ist definiert als $(1-\beta)*100$ und ist die Chance, die alternative Hypothese richtig zu akzeptieren.
+\end{itemize}
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stärke eines statistischen Tests}
+\begin{itemize}
+\item Um die Stärke eines Tests zu finden, benötigt man eine alternative Hypothese.
+\end{itemize}
+\vspace{-1ex}
+\begin{figure}
+\makebox[\textwidth]{
+  \includegraphics[width=0.65\textwidth]{figures/power-of-test}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\subsection{Stichprobengröße}
+
+\begin{frame}
+\frametitle{Stichprobengröße}
+\begin{itemize}
+\item Die Stärke oder Empfindlichkeit eines binären Hypothesentests ist die Wahrscheinlichkeit, dass der Test die Nullhypothese korrekt ablehnt, wenn die alternative Hypothese wahr ist.
+\vspace{1ex}
+\item Die Bestimmung der Stärke eines statistischen Tests und die Berechnung der Mindeststichprobengröße, die erforderlich ist, um einen Effekt einer bestimmten Größe zu erkennen, wird als Poweranalyse bezeichnet.
+\vspace{1ex}
+\item Sie beinhaltet 4 Faktoren:
+\vspace{1ex}
+\begin{enumerate}
+\item Wahrscheinlichkeit für Typ-I-Fehler
+\vspace{0.5ex}
+\item Wahrscheinlichkeit für Typ-II-Fehler
+\vspace{0.5ex}
+\item Effektgröße, d.h. die Größe des untersuchten Effekts im Verhältnis zur Standardabweichung der Probe.
+\vspace{0.5ex}
+\item Stichprobenumfang
+\end{enumerate}
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Berechnung der Stichprobengröße}
+\begin{itemize}
+\item Möchte man im Rahmen einer Studie eine Befragung durchführen, ist es interessant zu wissen, wie viele Personen befragt werden müssen. 
+\item Der Stichprobenumfang bzw. die Stichprobengröße kann berechnet werden und hängt davon ab, wie sicher oder überzeugt man von seinen Ergebnissen sein möchte. 
+\item Der Umfang einer Stichprobe erhöht sich, je sicherer man sich sein möchte. 
+\item Zur Berechnung der Stichprobengröße benötigen wir unterschiedliche Parameter, unter anderem den Z-Wert, der sich aus der z-Verteilung ergibt. 
+\item Der Stichprobenumfang lässt sich auch berechnen, wenn die Grundgesamtheit unbekannt ist.
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stichprobengröße bei bekannter Population}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+from scipy import stats
+import math
+
+def sample_size_pop(N, e=0.05, c=0.95, p=0.5, extra=None):
+  z = stats.norm.ppf((1 + c) / 2)
+  frac_n = (z**2 * p*(1-p)) / e**2
+  frac_d = 1 + ((z**2 * p*(1-p)) / (e**2 * N))
+  n = frac_n / frac_d
+  if extra:
+    n = n + n * extra 
+  return math.ceil(n)   # Werte aufrunden
+
+# Beispiel
+n = 4000
+sample_size_pop(n, c=0.99, e=0.03, p=0.5, extra=0.05)
+@
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Stichprobengröße bei unbekannter Population}
+\vspace{-1ex}
+<<engine='python', eval=F>>=
+from scipy import stats
+import math
+def sample_size(e=0.05, c=0.95, p=0.5, extra=None):
+  z = stats.norm.ppf((1 + c) / 2)
+  n = (z**2 * p * (1-p)) / e**2
+  if extra:
+   n = n + n * extra
+  return math.ceil(n)
+
+sample_size(p=0.09, e=0.01, c=0.95)
+@
+\vspace{20ex}
+\end{frame}
+
+\subsection{Sensitivität und Spezifität}
+
+\begin{frame}[fragile]
+\frametitle{Sensitivität und Spezifität}
+\begin{itemize}
+\item Sensitivität = Anteil der korrekt als positiv klassifizierten Objekte an der Gesamtheit der tatsächlich positiven Objekte 
+\vspace{2.75ex}
+\item Spezifität = Anteil der korrekt als negativ klassifizierten Objekte an der Gesamtheit der in Wirklichkeit negativen Objekte
+\end{itemize}
+\vspace{2.85ex}
+\begin{figure}
+\makebox[\textwidth]{
+  \includegraphics[width=0.8\textwidth]{figures/sensitivity_specificity}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Sensitivität und Spezifität}
+\begin{itemize}
+\item Positiver Vorhersagewert (PPV) = Anteil der korrekt als positiv klassifizierten Objekte an der Gesamtheit der als positiv klassifizierten Ergebnisse
+\item Negativer Vorhersagewert (NPV) = Anteil der korrekt als negativ klassifizierten Objekte an der Gesamtheit der als negativ klassifizierten Ergebnisse
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+  \includegraphics[width=0.8\textwidth]{figures/sensitivity_specificity}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{ROC-Kurve}
+\begin{itemize}
+\item Eng verbunden mit Sensitivität und Spezifität ist die Receiver-Operating-Characteristic (ROC)-Kurve.
+\vspace{1ex}
+\item Dies ist ein Diagramm, das die Beziehung zwischen der wahren positiven Rate (auf der vertikalen Achse) und der falsch positiven Rate (auf der horizontalen Achse) darstellt.
+\end{itemize}
+\vspace{2ex}
+\begin{figure}
+\makebox[\textwidth]{
+  \includegraphics[trim = 0 263 0 0, clip, width=\textwidth]{figures/ROC-curve}}
+\end{figure}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{ROC-Kurve}
+\begin{itemize}
+\item Eng verbunden mit Sensitivität und Spezifität ist die Receiver-Operating-Characteristic (ROC)-Kurve.  
+\vspace{1ex}
+\item Dies ist ein Diagramm, das die Beziehung zwischen der wahren positiven Rate (auf der vertikalen Achse) und der falsch positiven Rate (auf der horizontalen Achse) darstellt.
+\end{itemize}
+\begin{figure}
+\makebox[\textwidth]{
+  \includegraphics[trim = 90 0 0 162, clip, width=0.75\textwidth]{figures/ROC-curve}}
+\end{figure}
+\vspace{2ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Induktive Statistik}
+%------------------------------------------------
+
+\subsection{Verteilungs-Tests} 
+
+\begin{frame}[fragile]
+\frametitle{Tests der Mittelwerte numerischer Daten}
+\begin{itemize}
+\item Hypothesentests für die Mittelwerte von Gruppen
+\vspace{1ex}
+\begin{itemize}
+\item Vergleich einer Gruppe mit einem Festwert.
+\vspace{0.5ex}
+\item Vergleich von zwei Gruppen im Verhältnis zueinander.
+\vspace{0.5ex}
+\item Vergleich von drei oder mehr Gruppen miteinander.
+\end{itemize}
+\vspace{1ex}
+\item In jedem Fall unterscheiden wir zwischen zwei Fällen.
+\vspace{1ex}
+\item Wenn die Daten annähernd normalverteilt sind, können die sogenannten \textbf{parametrischen Tests} verwendet werden.
+\vspace{1ex}
+\item Diese Tests sind empfindlicher als nicht-parametrische Tests, erfordern aber, dass bestimmte Annahmen erfüllt sind. 
+\vspace{1ex}
+\item Wenn die Daten nicht normalverteilt sind oder nur in geordneter Form vorliegen, sollten die entsprechenden \textbf{nonparametrischen Tests} verwendet werden.
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Einstichproben-t-Test}
+\begin{itemize}
+\item Um den Mittelwert normalverteilter Daten mit einem Referenzwert zu vergleichen, verwenden wir typischerweise den Einstichproben-t-Test, der auf der t-Verteilung basiert.
+\vspace{1ex}
+\item In Python können Teststatistik und p-Wert für den Einstichproben-t-Test wie folgt berechnet werden:
+<<engine='python', eval=F>>=
+# One-sample t-Test
+from scipy import stats
+
+np.random.seed(7654567)  # fix seed to get same result
+rvs = stats.norm.rvs(loc=5, scale=10, size=(50,2))
+
+# Test if mean of random sample is equal to true mean
+t, pVal = stats.ttest_1samp(rvs,5.0)
+print(t); print(pVal)
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Wilcoxon-Vorzeichen-Rang-Test}
+\begin{itemize}
+\item Wenn die Daten nicht normalverteilt sind, sollte der Einstichproben-t-Test nicht verwendet werden (obwohl dieser Test ziemlich robust gegenüber Abweichungen von der Normalverteilung ist).
+\vspace{1ex}
+%\item Instead, we must use a nonparametric test on the mean value. We can do this by performing a Wilcoxon signed rank sum test.
+\item Stattdessen müssen wir einen nichtparametrischen Test auf den Mittelwert anwenden. Wir können dies tun, indem wir den Wilcoxon Rangsummentest durchführen.
+\vspace{1ex}
+%\item Note that in contrast to the one-sample t-test, this test checks for a difference from null:
+\item Beachtet, dass dieser Test im Gegensatz zum Einstichproben-t-Test nach einer Differenz von Null sucht.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Wilcoxon-Vorzeichen-Rang-Test}
+\begin{itemize}
+\item In Python kann der Wilcoxon-Vorzeichen-Rang-Test wie folgt berechnet werden:
+<<engine='python', eval=F>>=
+# Wilcoxon Signed Rank Sum test
+d = [6, 8, 14, 16, 23, 24, 28, 29, 41, -48, 49, 56, -60]
+rank, pVal = stats.wilcoxon(d)
+print(rank); print(pVal)
+@
+\vspace{1ex}
+\item Diese Methode besteht aus drei Schritten:
+\vspace{1ex}
+\begin{enumerate}
+\item Berechnen Sie die Differenz zwischen jeder Beobachtung und dem Wert des Interesses
+\vspace{0.5ex}
+\item Die Zeichen der Unterschiede ignorierend, ordnen Sie sie in der Größenordnung.
+\vspace{0.5ex}
+\item Berechnen Sie die Summe der Ränge aller negativen (oder positiven) Ränge, entsprechend den Beobachtungen unterhalb (oder oberhalb) des gewählten hypothetischen Wertes.
+\end{enumerate}
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Vergleich von zwei Verteilungen} 
+
+\begin{frame}
+\frametitle{Gepaarter t-Test}
+\begin{itemize}
+\item Beim Vergleich von zwei Gruppen miteinander sind zwei Fälle zu unterscheiden.
+\vspace{1ex}
+\item Im ersten Fall werden zwei Werte, die zu unterschiedlichen Zeiten vom gleichen Subjekt aufgenommen wurden, miteinander verglichen. 
+\vspace{1ex}
+\item Zum Beispiel die Größe der Schüler beim Eintritt in die Grundschule und nach dem ersten Jahr, um zu überprüfen, ob sie gewachsen sind.
+\vspace{1ex}
+\item Da uns nur der Unterschied in jedem Probanden zwischen der ersten und der zweiten Messung interessiert, wird dieser Test als gepaarter t-Test bezeichnet und ist im Wesentlichen gleichbedeutend mit einem Ein-Stichproben-Test für die mittlere Differenz.
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Gepaarter t-Test}
+\vspace{0.5ex}
+\begin{itemize}
+\item Daher liefern die beide Tests \textbf{stats.ttest\_1samp} und \textbf{stats.ttest\_rel} das gleiche Ergebnis (bis auf winzige numerische Unterschiede).
+\vspace{1ex}
+\footnotesize{
+<<engine='python', eval=F>>=
+# Load libraries
+import numpy as np
+from scipy import stats
+
+# Create random data for two time periods
+np.random.seed(1234)
+data = np.random.randn(10)+0.1
+data1 = np.random.randn(10)*5 # dummy data
+data2 = data1 + data
+
+# paired t-test
+print(stats.ttest_rel(data2, data1))
+# same group-difference as "data"
+
+# one-sample t-test on data
+print(stats.ttest_1samp(data, 0))
+@
+}
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Vergleich von zwei unabhängigen Verteilungen}
+\begin{frame}[fragile]
+\frametitle{Zweistichproben-t-Test}
+\begin{itemize}
+\item Ein ungepaarter t-Test vergleicht zwei von einander unabhängige Gruppen.
+\vspace{1ex}
+\item Ein Beispiel wäre der Vergleich der Wirkung von zwei Medikamenten, die an zwei verschiedene Patientengruppen abgegeben werden.
+\vspace{1ex}
+\item Die Grundidee ist die gleiche wie beim one-sample t-Test. Aber statt der Varianz des Mittelwerts, benötigen wir jetzt die Varianz der Differenz zwischen den Mittelwerten der beiden Gruppen.
+\vspace{1ex}
+<<engine='python', eval=F>>=
+# two-sample t-Test
+rvs1 = stats.norm.rvs(loc=5,scale=10,size=500)
+rvs2 = stats.norm.rvs(loc=5,scale=10,size=500)
+
+t_stat, pVal = stats.ttest_ind(rvs1,rvs2)
+print(pVal)
+@
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\subsection{Non-parametrischer Vergleich von zwei unabhängigen Verteilungen}
+\begin{frame}[fragile]
+\frametitle{Mann-Whitney test}
+\begin{itemize}
+\item Wenn die Messwerte von zwei Gruppen nicht normalverteilt sind, müssen wir auf einen nichtparametrischen Test zurückgreifen.
+\vspace{1ex}
+\item Der häufigste nichtparametrische Test für den Vergleich zweier unabhängiger Gruppen ist der Mann-Whitney-Test.
+\vspace{1ex}
+\item Die Teststatistik für diesen Test wird üblicherweise mit u angegeben:
+<<engine='python', eval=F>>=
+# Create two groups of data
+group1 = [1, 5 ,7 ,3 ,5 ,8 ,34 ,1 ,3 ,5 ,200, 3]
+group2 = [10, 18, 11, 12, 15, 19, 9, 17, 1, 22, 9, 8]
+
+# Calculate u and probability of a difference
+u_statistic, pVal = stats.mannwhitneyu(group1, group2)
+
+# Print p-Value
+print (pVal)
+@
+\end{itemize}
+\vspace{5ex}
+\end{frame}
+
+\subsection{Vergleich von mehreren Gruppen} 
+
+\begin{frame}[fragile]
+\frametitle{Varianz analyse (ANOVA)}
+\begin{itemize}
+\item Varianzanalyse (ANOVA) = Unterteilung der Varianz in die Varianz zwischen Gruppen und innerhalb von Gruppen um zu sehen, ob diese Verteilungen der Nullhypothese entsprechen, dass alle Gruppen aus der gleichen Verteilung stammen
+\vspace{1ex}
+\item Die Variablen, die die verschiedenen Gruppen unterscheiden, werden oft als Faktoren oder Behandlungen bezeichnet.
+\vspace{1ex}
+\item Wenn wir zum Beispiel eine Gruppe mit "No Treatment", eine andere mit "Treatment A" und eine dritte mit "Treatment B" vergleichen, dann führen wir eine Ein-Wege-ANOVA durch, wobei "Treatment" den einen Analysefaktor darstellt. 
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Varianz analyse (ANOVA)}
+\begin{itemize}
+\item Da die Nullhypothese darin besteht, dass es keinen Unterschied zwischen den Gruppen gibt, basiert der Test auf einem Vergleich der beobachteten Variation zwischen den Gruppen (d.h. zwischen ihren Mittelwerten) und der erwarteten Variabilität innerhalb der Gruppen (d.h. zwischen den Probanden).
+\vspace{1ex}
+\item Der Vergleich erfolgt in allgemeiner Form als F-Test zum Vergleich von Varianzen, aber für zwei Gruppen führt der t-Test zu genau dem gleichen Ergebnis.
+\vspace{1ex}
+\item Die einseitige ANOVA geht davon aus, dass alle Proben aus normalverteilten Populationen mit gleicher Varianz entnommen werden.
+\vspace{1ex}
+\item Die Annahme der gleichen Varianz kann mit dem \textbf{Leventest} überprüft werden.
+\end{itemize}
+\vspace{7ex}
+\end{frame}
+
+\begin{frame}
+\frametitle{Summe der Quadrate}
+\begin{itemize}
+\item Die grundlegende Technik der ANOVA ist eine Aufteilung der Summe der Quadrate (SS) in 3 Komponenten, die sich auf die im Modell verwendeten Effekte beziehen:
+\begin{itemize}
+\item eine Gesamtabweichung basierend auf allen Beobachtungsabweichungen vom großen Mittelwert ($SS_{Total}$), 
+\item eine Behandlungsabweichung ($SS_{Treatment}$) und 
+\item eine Fehlervarianz basierend auf allen Beobachtungsabweichungen von ihren entsprechenden Behandlungsmitteln ($SS_{Error}$).
+\end{itemize}
+\item Die Behandlungsvarianz basiert auf den Abweichungen der Behandlungsmittel vom großen Mittelwert, wobei das Ergebnis mit der Anzahl der Beobachtungen in jeder Behandlung multipliziert wird
+\item Die drei Summen der Quadrate stehen folgendermaßen zueinander: $SS_{Total} = SS_{Error} + SS_{Treatment}$
+\item Wenn die Nullhypothese wahr ist, sind alle drei Varianzschätzungen gleich (innerhalb des Stichprobenfehlers). 
+\end{itemize}
+\vspace{3ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Freiheitsgrade}
+\begin{itemize}
+\item In Statistik hat eine Gruppe von n Werten n Freiheitsgrade (DF).
+\vspace{1ex}
+\item Wenn wir nur die Form der Verteilung der Werte betrachten, können wir von jedem Wert den Mittelwert der Stichprobe abziehen. Dann haben die restlichen Daten nur n - 1 DF.
+\vspace{1ex}
+\item Die Anzahl der Freiheitsgrade DF kann auf ähnliche Weise wie die Quadratsummen aufgeteilt werden: $DF_{Total} = DF_{Error} + DF_{Treatment}$ \vspace{1ex}
+\item Wenn wir z.B. 22 Patienten haben, die in 3 Gruppen unterteilt sind, werden die DFs bei der ANOVA wie folgt unterteilt:
+\vspace{1ex}
+\begin{itemize}
+\item 1 DF für den Gesamtmittelwert.
+\vspace{0.5ex}
+\item 2 DF für den Mittelwert jeder der drei Gruppen
+\vspace{0.5ex}
+\item 19 DF (= 22 - 1 - 2) bleiben für die verbleibenden Abweichungen von den Gruppenmitteln übrig.
+\end{itemize}
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Varianz analyse (ANOVA)}
+\begin{itemize}
+\item Die Nullhypothese von ANOVAs ist, dass alle Gruppen aus der gleichen Population stammen. 
+\vspace{1ex}
+\item Unter der Nullhypothese, dass zwei normalverteilte Populationen gleiche Varianzen aufweisen, erwarten wir, dass das Verhältnis der beiden Stichprobenvarianten eine F-Verteilung aufweist. 
+\vspace{1ex}
+\item Der F-Wert ist der größere mittlere Quadratwert geteilt durch den kleineren Wert. (Wenn wir nur zwei Gruppen haben, ist der F-Wert das Quadrat des entsprechenden t-Wertes).
+\vspace{1ex}
+\item Aus dem F-Wert können wir den entsprechenden p-Wert ablesen.
+\end{itemize}
+\vspace{17ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Varianz analyse (ANOVA)}
+\begin{itemize}
+\item Dies lässt sich wie folgt in Python testen:
+<<engine='python', eval=F>>=
+# Load stats library
+import scipy.stats as stats
+
+# Create data
+tillamook = [0.0571,0.0813,0.0831,0.0976,0.0817]
+newport = [0.0873,0.0662,0.0672,0.0819,0.0749,0.0649]
+petersburg = [0.0974,0.1352,0.0817,0.1016,0.0968]
+magadan = [0.1033,0.0915,0.0781,0.0685,0.0677, 0.0697]
+
+# One-way ANOVA
+stats.f_oneway(tillamook, newport, petersburg, magadan)
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Varianz analyse (ANOVA)}
+\begin{itemize}
+\item Eine detailliertere Form der ANOVA wird durch das statsmodels Paket ermöglicht:
+<<engine='python', eval=F>>=
+# Import libraries
+import pandas as pd
+import seaborn as sns
+from statsmodels.formula.api import ols
+from statsmodels.stats.anova import anova_lm
+
+# Load data
+iris = sns.load_dataset("iris")
+  
+# Perform ANOVA
+model = ols('sepal_length ~ C(species)', iris).fit()
+anovaResults = anova_lm(model)
+print(anovaResults)
+@
+\end{itemize}
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Multiple Vergleiche}
+\begin{itemize}
+\item Nullhypothese einer ANOVA = die Mittel aller Proben sind gleich sind
+\item Wenn also eine einseitige ANOVA ein signifikantes Ergebnis liefert, wissen wir nur, dass sie nicht identisch sind.
+\item Aber wir möchten auch wissen, für welche Probenpaare die Hypothese der gleichen Werte abgelehnt wird.
+\item In diesem Fall führen wir mehrere Tests gleichzeitig durch, einen Test für jedes Probenpaar (Post-Hoc-Analyse).
+\item Post-Hoc-Analyse = Untersuchung der Daten, nachdem das Experiment abgeschlossen ist, nach Mustern die nicht vorher spezifiziert wurden.
+\item Dies führt zu einem Mehrfachtest-Problem: Da wir mehrere Vergleichstests durchführen, sollten wir das Risiko, ein signifikantes Ergebnis zu erhalten, durch eine Korrektur der p-Werte kompensieren, auch wenn unsere Nullhypothese wahr ist.
+\item Wir haben dazu eine Reihe von Möglichkeiten: \textbf{Tukey HSD, Bonferroni-Korrektur, Holm-Korrektur, ...}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Tukey's Test}
+\begin{itemize}
+\item Tukey's Test, manchmal auch als Tukey Honest Significant Difference Test (HSD)-Methode bezeichnet, ist ein Test, der spezifisch für den Vergleich aller Paare von k unabhängigen Proben ist. 
+\item Tukey's HSD kontrolliert die Fehlerrate Typ I über mehrere Vergleiche hinweg und wird allgemein als akzeptable Technik angesehen. 
+\item Kann als Post-Hoc-Analyse verwendet werden, um zu testen, zwischen welchen beiden Gruppenmitteln ein signifikanter Unterschied besteht:
+\end{itemize}
+<<engine='python', eval=F>>=
+# Load function
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+# Tukey HSD test
+res2 = pairwise_tukeyhsd(iris['sepal_length'], 
+                         iris['species'])
+
+print(res2)
+@
+\vspace{10ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Bonferroni- \& Holm-Korrektur}
+\begin{itemize}
+\item Wir können aber auch t-Tests für alle Paare durchführen, die p-Werte berechnen und für das Mehrfachtest-Problem korrigieren.
+\item \textbf{Bonferroni-Korrektur} = p-Wert / Anzahl der Tests
+\item \textbf{Holm-Korrektur} = Vergleicht nacheinander den niedrigsten p-Wert mit einer Typ-I-Fehlerrate, die nach jedem Test reduziert wird.
+\end{itemize}
+<<engine='python', eval=F>>=
+# Multi-comparison of groups
+mod = MultiComparison(iris['sepal_length'], iris['species'])
+
+# Bonferroni Correction
+mod.allpairtest(stats.ttest_rel, method='b')rtp[0]
+
+# Holm correction
+mod.allpairtest(stats.ttest_rel, method='Holm')[0]
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Nicht-parametrischer Vergleich von mehreren Gruppen}
+\begin{frame}[fragile]
+\frametitle{Kruskal-Wallis test}
+\begin{itemize}
+\item Wenn wir drei oder mehr Gruppen miteinander vergleichen und Daten nicht normalverteilt sind, verwendent man den \textbf{Kruskal-Wallis-Test}.
+\item Wenn die Nullhypothese wahr ist, folgt die Teststatistik für den Kruskal-Wallis-Test der Chi-Quadrat-Verteilung. 
+<<engine='python', eval=F>>=
+# Load stats library
+from scipy import stats
+
+# Create dummy data
+x = [1, 1, 1]
+y = [2, 2, 2]
+z = [2, 2]
+
+# Perform Kruskal-Wallis test
+stats.kruskal(x, y, z)
+@
+\vspace{5ex}
+\end{itemize}
+\end{frame}
+
+\subsection{Vergleich von mehreren Faktorn}
+
+\begin{frame}[fragile]
+\frametitle{Two-Way ANOVA}
+\begin{itemize}
+\item Zwei-Wege-ANOVAs haben statt einem Faktor zwei Faktoren. 
+\item Wir können nicht nur sehen, ob jeder der Faktoren signifikant ist; wir können auch überprüfen, ob das Zusammenspiel der Faktoren einen signifikanten Einfluss auf die Verteilung der Daten hat.
+\end{itemize}
+<<engine='python', eval=F>>=
+import pandas as pd
+from statsmodels.formula.api import ols
+from statsmodels.stats.anova import anova_lm
+
+# Load dataset
+titanic = sns.load_dataset("titanic")
+
+# ANOVA with interaction
+formula = 'age ~ C(sex) + C(pclass) + C(pclass):C(sex)'
+lm = ols(formula, titanic).fit()
+anova_lm(lm)
+@
+\vspace{5ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Three-Way ANOVA}
+\begin{itemize}
+\item Bei mehr als zwei Faktoren ist es empfehlenswert, die statistische Modellierung zu verwenden.
+\item Wie immer bei der Analyse von statistischen Daten sollte man zunächst die Daten visuell überprüfen.
+\end{itemize}
+<<engine='python', eval=F>>=
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set(style="whitegrid")
+df = sns.load_dataset("exercise")
+
+sns.factorplot("time", "pulse", hue="kind", 
+               col="diet", data=df, 
+               hue_order=["rest", "walking", "running"], 
+               palette="YlGnBu_d", 
+               aspect=.75).despine(left=True)
+plt.show()
+@
+\vspace{5ex}
+\end{frame}
+
+\subsection{Tests an kategorischen Daten}
+
+\begin{frame}[fragile]
+\frametitle{Tests an kategorischen Daten}
+\begin{itemize}
+\item In einer Datenprobe wird die Anzahl der Daten, die in eine bestimmte Gruppe fallen, als Frequenz bezeichnet, so dass die Analyse kategorischer Daten die Analyse von Frequenzen ist.
+\vspace{1ex}
+\item Beim Vergleich von zwei oder mehr Gruppen werden die Daten oft in Form einer Häufigkeitstabelle, manchmal auch Kontingenztabelle genannt, dargestellt.
+\vspace{1ex}
+\item Für die Analyse von Häufigkeitstabellen gibt es eine Reihe von statistischen Tests: \textbf{Chi-Quadrat-Test, Fisher's Exact Test, McNemar's Test, Cochran's Q Test}
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{One-Way Chi-Square Test}
+\begin{itemize}
+\item Chi-Quadrat-Test = Dies ist der am häufigsten verwendete Typ.
+\vspace{1ex}
+\item Es handelt sich um einen Hypothesentest, der überprüft, ob die Einträge in den einzelnen Zellen einer Häufigkeitstabelle alle aus der gleichen Verteilung stammen.
+\vspace{1ex}
+\item Mit anderen Worten, es überprüft die Nullhypothese $H_{0}$, dass die Ergebnisse unabhängig von der Zeile oder Spalte sind, in der sie erscheinen.
+\vspace{1ex}
+\item Die alternative Hypothese $H_{a}$ spezifiziert nicht die Art der Zuordnung, so dass eine hohe Aufmerksamkeit auf die Daten erforderlich ist, um die vom Test gelieferten Informationen zu interpretieren.
+\vspace{1ex}
+\end{itemize}
+\vspace{15ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{One-Way Chi-Square Test}
+\begin{itemize}
+\item Nehmen wir an, dass du mit deinen Freunden wandern bist. Jeden Abend wird ein Los gezogen, wer Geschirr spülen muss. Am Ende der Reise scheinst du den größten Teil der Arbeit erledigt zu haben:
+<<engine='python', eval=F>>=
+import pandas as pd
+df = pd.DataFrame({"name":["You","Peter","Laura","Paul"], 
+                   "dishes":[10,7,6,5]})
+@
+\item Wie wahrscheinlich es ist, dass diese Verteilung durch Zufall entstanden ist?
+\item Die erwartete Frequenz $D = n_{total}/n_{Personen} = 7$
+\item Die Wahrscheinlichkeit, dass diese Verteilung durch Zufall zustande kam, ist:
+<<engine='python', eval=F>>=
+from scipy import stats
+V, p = stats.chisquare(df["dishes"])
+print(p) # 0.572406
+@
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Chi-Quadrat-Kontingenztest}
+\begin{itemize}
+\item Wenn Daten in Zeilen und Spalten angeordnet werden können, können wir überprüfen, ob die Zahlen in den einzelnen Spalten vom Zeilenwert abhängig sind. Aus diesem Grund wird dieser Test auch als Kontingenztest bezeichnet.
+\item Der Chi-Quadrat-Kontingenztest basiert auf einer Teststatistik, die die Abweichung der beobachteten Daten von den zu erwarteten Werten misst, wenn laut Nullhypothese kein Zusammenhang bestehen würde.
+\item Der Chi-Quadrat-Test ist ein reiner Hypothesentest. Es sagt aus, ob die beobachtete Häufigkeit aus einer einzelnen Population durch Zufall zurückzuführen ist.
+\item Der Python-Befehl \textbf{stats.chi2\_contingency} gibt die folgende Liste aus (Chi-Quadrat-Wert, p-Wert, Freiheitsgrad, erwartete Werte).
+<<engine='python', eval=F>>=
+data = np.array([[43,9], [44,4]])
+V, p, dof, expected = stats.chi2_contingency(data)
+print(p) # 0.300384770391
+@
+\end{itemize}
+\vspace{2ex}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fisher's exact Test}
+\begin{itemize}
+\item Während der Chi-Quadrat-Test ungefähr ist, ist der Fisher's Exact Test ein genauer Test. 
+\item Er ist rechnerisch teurer und aufwendiger als der Chi-Quadrat-Test und wurde ursprünglich nur für kleine Stichprobenzahlen verwendet. Im Allgemeinen ist es jedoch mittlerweile der bessere Test.
+\item Die Implementierung in Python ist recht trivial:
+<<engine='python', eval=F>>=
+data = np.array([[43,9], [44,4]])
+oddsratio, p = stats.fisher_exact(obs)
+print(p) # 0.23915695682
+@
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+\subsection{Auswahl des richtigen Tests für den Vergleich von Gruppen} 
+\begin{frame}
+\frametitle{Auswahl des richtigen Tests für den Vergleich von Gruppen}
+\begin{itemize}
+\end{itemize}
+\vspace{1ex}
+\adjustbox{max height=\dimexpr\textheight-3.5cm\relax,
+max width=\textwidth}{
+\begin{tabular}{l | p{50mm} | p{50mm}} \hline
+No. of groups compared & Independent samples & Paired samples \\ \hline
+\multicolumn{3}{l}{\textbf{Groups of nominal data}} \\ \hline
+1 & One-sample t-test or Wilcoxon signed rank sum test & - \\ \hline
+2 or more & Fisher’s exact test or chi-square test & McNemar's test \\ \hline
+\multicolumn{3}{l}{\textbf{Groups of ordinal data}} \\ \hline
+2 & Mann–Whitney U test & Wilcoxon signed rank test \\ \hline
+3 or more & Kruskal–Wallis test & Friedman test \\ \hline
+\multicolumn{3}{l}{\textbf{Groups of continuous data}} \\ \hline
+2 & Student’s t-test or Mann–Whitney test & Paired t-test or Wilcoxon signed-rank sum test \\ \hline
+3 or more & ANOVA or Kruskal–Wallis test & Repeated measures ANOVA or Friedman test \\ \hline
+\end{tabular}
+} \\
+\vspace{1ex}
+\textbf{Hinweis:} Tests zum Vergleich einer Gruppe mit einem festen Wert sind die gleichen wie für den Vergleich zweier Gruppen mit gepaarten Stichproben.
+\vspace{5ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Übung}
+%------------------------------------------------
+
+\begin{frame}[fragile]
+\frametitle{Übung}
+\begin{itemize}
+\item Ladet den Datensatz \textbf{schoko.csv} in Python
+\vspace{1ex}
+\item Prüft ob der Preis von Schokolade normalverteilt ist (visuell und statistisch)
+\vspace{1ex}
+\item Prüft ob Bio-Schokolade signifikant teurer/billiger als normale Schokolade ist (visuell und statistisch)
+\vspace{1ex}
+\item Prüft ob der Schokoladen-Preis von der Kategorie abhängig ist (visuell und statistisch)
+\vspace{1ex}
+\item Erstellt eine Kontingenztabelle mit Bio \& Fair und prüft ob es möglich ist, dass die Verteilung durch Zufall zustande kam
+\vspace{1ex}
+\item Erstellt eine Kontingenztabelle mit Bio \& Kategorie und prüft ob es möglich ist, dass die Verteilung durch Zufall zustande kam
+\end{itemize}
+\vspace{20ex}
+\end{frame}
+
+%------------------------------------------------
+\section{Vielen Dank für eure Aufmerksamkeit!}
+%------------------------------------------------
+
+\end{document}
